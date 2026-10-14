@@ -134,3 +134,9 @@ GUIA-PUBLICACION.md     ← esta guía
 reemplazar.js           ← cambia un texto en todo el sitio (necesita Node.js)
 fuentes-del-sitio/      ← generador del sitio, para regenerarlo si cambian los productos
 ```
+
+## 7. Vista previa en Claude
+
+Mientras el sitio se define, la vista previa vive como artefacto de Claude: https://claude.ai/artifact/14XD3Uegu33CBv77xa7gtU
+Es una copia del contenido de `funnyfoot-sitio/` (con los enlaces ajustados a archivos) y se regenera con
+`python3 fuentes-del-sitio/generar_vista_previa.py`. En la vista previa los formularios no se envían; solo lo hacen en el sitio publicado en Netlify.
