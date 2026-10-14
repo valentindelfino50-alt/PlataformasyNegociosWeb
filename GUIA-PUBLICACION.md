@@ -43,7 +43,26 @@ Además:
 - **Razón social, CUIT y email**: la normativa de Defensa del Consumidor los pide visibles. Agregalos en el pie de página con:
   `node reemplazar.js "© 2026 Funny Foot Calzados. Todos los derechos reservados." "© 2026 Funny Foot Calzados · Razón social … · CUIT … · email … · Todos los derechos reservados."`
 
-## 3. Publicar en Netlify (≈ 10 minutos)
+## 3. Publicar en Netlify conectado a GitHub (recomendado, ≈ 10 minutos)
+
+Así, cada cambio que Claude suba al repositorio se publica solo, sin arrastrar carpetas.
+
+1. Entrá a [app.netlify.com](https://app.netlify.com) y registrate con **GitHub** (la cuenta dueña de este repositorio).
+2. Abrí [app.netlify.com/start](https://app.netlify.com/start) (o **Add new project → Import an existing project**) y elegí **GitHub**.
+3. Autorizá a Netlify. Cuando GitHub te pregunte, dale acceso **solo a este repositorio**: `PlataformasyNegociosWeb`.
+4. Elegí el repositorio y completá así:
+   - **Branch to deploy:** `claude/fervent-ptolemy-r4iap9`
+   - **Base directory:** vacío
+   - **Build command:** vacío
+   - **Publish directory:** `funnyfoot-sitio`
+   - **Project name:** el nombre que quieras (por ejemplo `funnyfoot-caballito`)
+5. Tocá **Deploy**. En 1 o 2 minutos aparece la dirección `https://tu-nombre.netlify.app`.
+6. Pasale a Claude esa dirección. Claude reemplaza `SU-SITIO.netlify.app` en todo el sitio, lo sube y Netlify lo publica solo.
+7. Activá **Form detection** y el aviso por email de los formularios (ver "Formularios", más abajo).
+
+Si Claude trabaja en otra rama en el futuro, cambiá **Project configuration → Build & deploy → Branches → Production branch** para que Netlify siga esa rama.
+
+## 3B. Publicar arrastrando la carpeta (alternativa manual)
 
 1. Creá una cuenta gratis en [netlify.com](https://www.netlify.com) (podés entrar con tu cuenta de Google).
 2. Entrá a [app.netlify.com/drop](https://app.netlify.com/drop) y arrastrá la carpeta `funnyfoot-sitio` (o el `.zip`).
