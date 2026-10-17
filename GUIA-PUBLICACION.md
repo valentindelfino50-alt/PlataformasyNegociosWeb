@@ -49,6 +49,12 @@ El panel entra con el usuario **PlataformasyNegocios** y un código que vos eleg
 3. En **Deploys → Trigger deploy → Deploy project** para que tome las variables.
 4. Entrá a `https://tu-sitio/admin/`, con usuario `PlataformasyNegocios` y tu código.
 
+Si al entrar ves **“El panel todavía no está configurado”**, el mensaje indica cuál de las dos variables no le llega a la función. Revisá que:
+- el nombre sea exacto, en mayúsculas y sin espacios: `GITHUB_TOKEN` y `ADMIN_CODE`;
+- el alcance (**Scopes**) incluya **Functions**;
+- el código tenga al menos 8 caracteres;
+- hayas publicado el sitio de nuevo **después** de crear las variables (las funciones toman las variables al publicar).
+
 Variables opcionales: `ADMIN_USER` (cambia el usuario), `GITHUB_BRANCH` (si el sitio se publica desde otra rama) y `GITHUB_REPO`.
 
 ### Formularios

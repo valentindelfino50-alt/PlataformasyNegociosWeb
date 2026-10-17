@@ -96,8 +96,13 @@ async function handle(event) {
   try { req = JSON.parse(raw || '{}'); } catch (e) { throw fail(400, 'json', 'Pedido inválido.'); }
   const c = cfg();
 
-  if (!c.code || c.code.length < 8 || !c.token) {
-    throw fail(503, 'config', 'El panel todavía no está configurado en Netlify: faltan las variables ADMIN_CODE (mínimo 8 caracteres) y GITHUB_TOKEN.');
+  const faltan = [];
+  if (!c.token) faltan.push('GITHUB_TOKEN (no llega a la función)');
+  if (!c.code) faltan.push('ADMIN_CODE (no llega a la función)');
+  else if (c.code.length < 8) faltan.push('ADMIN_CODE (tiene ' + c.code.length + ' caracteres y necesita al menos 8)');
+  if (faltan.length) {
+    throw fail(503, 'config', 'El panel todavía no está configurado en Netlify. Falta o está mal: ' + faltan.join(' y ') +
+      '. Revisá que el nombre sea exacto, que el alcance incluya "Functions" y publicá el sitio de nuevo.');
   }
 
   if (req.action === 'login') {
