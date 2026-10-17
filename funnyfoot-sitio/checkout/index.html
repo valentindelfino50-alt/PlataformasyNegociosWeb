@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Finalizar compra | Funny Foot Calzados</title>
+<meta name="description" content="Completá tus datos para confirmar tu pedido en Funny Foot Calzados.">
+<meta name="robots" content="noindex,follow">
+<meta name="ff-base" content="/">
+<link rel="canonical" href="https://SU-SITIO.netlify.app/checkout/">
+<meta name="theme-color" content="#ED0B6F">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_AR">
+<meta property="og:site_name" content="Funny Foot Calzados">
+<meta property="og:title" content="Finalizar compra | Funny Foot Calzados">
+<meta property="og:description" content="Completá tus datos para confirmar tu pedido en Funny Foot Calzados.">
+<meta property="og:url" content="https://SU-SITIO.netlify.app/checkout/">
+<meta property="og:image" content="https://SU-SITIO.netlify.app/assets/img/og-funny-foot.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/estilos.css">
+</head>
+<body>
+<a class="skip" href="#contenido">Saltar al contenido</a>
+<header class="site">
+  <div class="wrap bar">
+    <a href="/" class="brandmark" aria-label="Funny Foot Calzados - Inicio">
+      <img src="/assets/img/logo-funny-foot-rosa.png" alt="Funny Foot Calzados" width="76" height="34">
+    </a>
+    <nav class="primary" aria-label="Navegación principal"><a href="/">Inicio</a><a href="/productos/">Productos</a><a href="/nosotros/">Nosotros</a><a href="/contacto/">Contacto</a></nav>
+    <div class="header-actions">
+      <button type="button" class="icon-btn hamburger" id="hamburgerBtn" aria-label="Abrir menú" aria-expanded="false" aria-controls="mobileNav"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+      <button type="button" class="icon-btn" id="cartBtn" aria-label="Ver carrito"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="21" r="1.4"/><circle cx="18" cy="21" r="1.4"/><path d="M2.5 3h2.4l2.6 12.4a2 2 0 0 0 2 1.6h7.9a2 2 0 0 0 2-1.6L21 7H6.2"/></svg><span class="cart-count" id="cartCount" hidden>0</span></button>
+    </div>
+  </div>
+</header>
+<div id="mobileNav"><a href="/">Inicio</a><a href="/productos/">Productos</a><a href="/nosotros/">Nosotros</a><a href="/contacto/">Contacto</a></div>
+<main id="contenido">
+<div class="wrap">
+  <div class="page-head">
+    <nav class="crumbs" aria-label="Migas de pan"><a href="/">Inicio</a> <span aria-hidden="true">›</span> <span aria-current="page">Finalizar compra</span></nav>
+    <div class="dashline" style="margin-bottom:16px;"><span></span><span></span><span></span></div>
+    <h1>Finalizar compra</h1>
+    <p>Completá tus datos para confirmar el pedido.</p>
+  </div>
+</div>
+<section class="wrap">
+  <div class="co-empty" id="coEmpty" hidden>
+    <h2>Tu carrito está vacío</h2>
+    <p>Elegí tus productos y volvé para finalizar la compra.</p>
+    <a class="btn btn-pink" href="/productos/">Ver catálogo</a>
+  </div>
+  <div class="co-grid" id="coGrid">
+    <form id="checkoutForm" class="co-form" name="pedido" method="POST" action="/pedido-recibido/" data-netlify="true" netlify-honeypot="bot-field" novalidate>
+      <input type="hidden" name="form-name" value="pedido">
+      <p class="hp" aria-hidden="true"><label>No completar este campo <input name="bot-field" tabindex="-1" autocomplete="off"></label></p>
+      <input type="hidden" name="pedido_numero" id="fNumero">
+      <input type="hidden" name="productos" id="fProductos">
+      <input type="hidden" name="productos_json" id="fProductosJson">
+      <input type="hidden" name="subtotal" id="fSubtotal">
+      <input type="hidden" name="descuento" id="fDescuento">
+      <input type="hidden" name="envio" id="fEnvio">
+      <input type="hidden" name="total" id="fTotal">
+
+      <fieldset class="co-block">
+        <legend>1. Tus datos</legend>
+        <div class="field"><label for="fNombre">Nombre y apellido</label><input id="fNombre" name="nombre" autocomplete="name" maxlength="80" required><p class="err" data-err="nombre" hidden></p></div>
+        <div class="field-row">
+          <div class="field"><label for="fEmail">Email</label><input id="fEmail" name="email" type="email" autocomplete="email" maxlength="120" required><p class="err" data-err="email" hidden></p></div>
+          <div class="field"><label for="fTel">Teléfono / WhatsApp</label><input id="fTel" name="telefono" type="tel" autocomplete="tel" maxlength="30" placeholder="11 0000-0000" required><p class="err" data-err="telefono" hidden></p></div>
+        </div>
+      </fieldset>
+
+      <fieldset class="co-block">
+        <legend>2. Entrega</legend>
+        <label class="pay-option"><input type="radio" name="entrega" value="domicilio" checked><span><b>Envío a domicilio</b><span id="entregaDomDesc"></span></span></label>
+        <label class="pay-option"><input type="radio" name="entrega" value="retiro"><span><b>Retiro en el local</b><span>Sin cargo · Av. Rivadavia 6521, Caballito, Ciudad de Buenos Aires</span></span></label>
+        <div id="domBlock">
+          <div class="field"><label for="fDir">Calle y número</label><input id="fDir" name="direccion" autocomplete="street-address" maxlength="120"><p class="err" data-err="direccion" hidden></p></div>
+          <div class="field-row">
+            <div class="field"><label for="fPiso">Piso / depto (opcional)</label><input id="fPiso" name="piso" maxlength="30"></div>
+            <div class="field"><label for="fCP">Código postal</label><input id="fCP" name="cp" autocomplete="postal-code" maxlength="10" inputmode="text"><p class="err" data-err="cp" hidden></p></div>
+          </div>
+          <div class="field-row">
+            <div class="field"><label for="fLoc">Localidad</label><input id="fLoc" name="localidad" autocomplete="address-level2" maxlength="80"><p class="err" data-err="localidad" hidden></p></div>
+            <div class="field"><label for="fProv">Provincia</label><select id="fProv" name="provincia" autocomplete="address-level1"><option value="Ciudad Autónoma de Buenos Aires" selected>Ciudad Autónoma de Buenos Aires</option><option value="Buenos Aires">Buenos Aires</option><option value="Catamarca">Catamarca</option><option value="Chaco">Chaco</option><option value="Chubut">Chubut</option><option value="Córdoba">Córdoba</option><option value="Corrientes">Corrientes</option><option value="Entre Ríos">Entre Ríos</option><option value="Formosa">Formosa</option><option value="Jujuy">Jujuy</option><option value="La Pampa">La Pampa</option><option value="La Rioja">La Rioja</option><option value="Mendoza">Mendoza</option><option value="Misiones">Misiones</option><option value="Neuquén">Neuquén</option><option value="Río Negro">Río Negro</option><option value="Salta">Salta</option><option value="San Juan">San Juan</option><option value="San Luis">San Luis</option><option value="Santa Cruz">Santa Cruz</option><option value="Santa Fe">Santa Fe</option><option value="Santiago del Estero">Santiago del Estero</option><option value="Tierra del Fuego">Tierra del Fuego</option><option value="Tucumán">Tucumán</option></select></div>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="co-block">
+        <legend>3. Medio de pago</legend>
+<label class="pay-option" data-pay="transferencia"><input type="radio" name="pago" value="transferencia" checked><span><b>Transferencia bancaria</b><span>5% de descuento</span></span></label>
+<label class="pay-option" data-pay="mercadopago"><input type="radio" name="pago" value="mercadopago"><span><b>Mercado Pago</b><span>Te enviamos el link de pago</span></span></label>
+<label class="pay-option" data-pay="tarjeta"><input type="radio" name="pago" value="tarjeta"><span><b>Tarjeta de crédito o débito</b><span>Hasta 3 cuotas sin interés. Coordinamos el pago con un link seguro</span></span></label>
+<label class="pay-option" data-pay="efectivo" data-solo-retiro="1"><input type="radio" name="pago" value="efectivo"><span><b>Efectivo en el local</b><span>Solo con retiro en el local</span></span></label>
+        <p class="err" data-err="pago" hidden></p>
+        <p class="note-small">No se te cobra en este sitio. Al confirmar, te contactamos para acordar el pago.</p>
+      </fieldset>
+
+      <fieldset class="co-block">
+        <legend>4. Confirmar</legend>
+        <div class="field"><label for="fNotas">Notas para el pedido (opcional)</label><textarea id="fNotas" name="notas" rows="3" maxlength="500" placeholder="Horarios de entrega, referencias, consultas…"></textarea></div>
+        <label class="consent"><input type="checkbox" name="acepta" id="fAcepta" value="si" required> <span>Acepto los <a href="/privacidad-y-terminos/" class="u" target="_blank" rel="noopener">términos y la política de privacidad</a>.</span></label>
+        <p class="err" data-err="acepta" hidden></p>
+        <div class="co-alert" id="coAlert" role="alert" hidden></div>
+        <button type="submit" class="btn btn-pink btn-block" id="coSubmit">Confirmar pedido</button>
+      </fieldset>
+    </form>
+
+    <aside class="co-summary" aria-label="Resumen del pedido">
+      <h2>Resumen del pedido</h2>
+      <div id="coItems"></div>
+      <div class="co-line"><span>Subtotal</span><span id="sSubtotal"></span></div>
+      <div class="co-line" id="sDescRow" hidden><span id="sDescLabel">Descuento</span><span id="sDesc"></span></div>
+      <div class="co-line"><span>Envío</span><span id="sEnvio"></span></div>
+      <div class="co-line total"><span>Total</span><span id="sTotal"></span></div>
+      <a class="u note-small" href="/productos/">← Seguir comprando</a>
+    </aside>
+  </div>
+</section>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <div class="brandmark"><img src="/assets/img/logo-funny-foot-blanco.png" alt="Funny Foot Calzados" width="67" height="30" loading="lazy"></div>
+        <p class="desc">Calzado infantil con estilo, calidad y mucha diversión. Local de barrio en Caballito, pedidos online para toda la Argentina.</p>
+        <div class="social-row">
+          <a href="https://wa.me/5491155550199" target="_blank" rel="noopener" aria-label="Escribinos por WhatsApp" data-wa><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 20l1.3-4A8 8 0 1 1 9 19l-5 1Z"/><path d="M8.5 9.7c0 3.4 2.8 6.2 6.2 6.2"/></svg></a>
+        </div>
+      </div>
+      <div>
+        <h4>TIENDA</h4>
+        <ul>
+          <li><a href="/productos/">Todos los productos</a></li>
+          <li><a href="/productos/zapatillas-con-luz-led/">Con luz LED</a></li><li><a href="/productos/botas-y-botitas/">Botas y botitas FERLI</a></li><li><a href="/productos/zapatillas-urbanas/">Urbanas FERLI</a></li><li><a href="/productos/zapatillas-deportivas/">Deportivas JAGUAR</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>AYUDA</h4>
+        <ul>
+          <li><a href="/contacto/">Contacto</a></li>
+          <li><a href="/envios-y-pagos/">Envíos y pagos</a></li>
+          <li><a href="/cambios-y-devoluciones/">Cambios y devoluciones</a></li>
+          <li><a href="/privacidad-y-terminos/">Privacidad y términos</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>VISITANOS</h4>
+        <ul>
+          <li><a href="/nosotros/">Av. Rivadavia 6521, Caballito, Ciudad de Buenos Aires</a></li>
+          <li><a href="/nosotros/">Lunes a viernes 10 a 19h · Sábados 10 a 14h</a></li>
+          <li><a href="https://wa.me/5491155550199" target="_blank" rel="noopener" data-wa>WhatsApp 11 5555-0199</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 Funny Foot Calzados. Todos los derechos reservados.</span>
+      <span>Sitio desarrollado como parte de un trabajo práctico — Plataformas y Negocios Web</span>
+    </div>
+  </div>
+</footer>
+
+<div id="toast" role="status" aria-live="polite"><span class="dot"></span><span id="toastMsg">¡Agregado al carrito!</span></div>
+
+<div class="overlay" id="overlay"></div>
+<aside class="drawer" id="cartDrawer" aria-label="Carrito de compras" aria-hidden="true">
+  <div class="drawer-head">
+    <h2>Tu carrito</h2>
+    <button type="button" class="modal-close" id="closeDrawer" aria-label="Cerrar carrito"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><line x1="4" y1="4" x2="20" y2="20"/><line x1="20" y1="4" x2="4" y2="20"/></svg></button>
+  </div>
+  <div class="drawer-body" id="drawerBody"></div>
+  <div class="drawer-foot" id="drawerFoot"></div>
+</aside>
+
+<!-- ============ ICON SYMBOLS ============ -->
+<svg width="0" height="0" style="position:absolute">
+<defs>
+<symbol id="ic-sneaker" viewBox="0 0 120 80">
+  <g fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="2" y1="26" x2="16" y2="26"/><line x1="2" y1="34" x2="20" y2="34"/><line x1="2" y1="42" x2="14" y2="42"/>
+    <path d="M28 46 C30 36 36 24 46 18 C50 24 58 27 66 27 L66 20 C74 20 84 24 92 32 C100 39 106 40 112 40 C114 48 112 58 104 62 L34 62 C28 62 26 54 28 46 Z"/>
+    <path d="M46 27 L66 27"/>
+    <path d="M52 32 L60 24" /><path d="M58 36 L67 27"/>
+    <path d="M34 62 L34 68 L112 68 L112 60"/>
+  </g>
+</symbol>
+<symbol id="ic-shield" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" d="M12 2.6 20 6v6c0 5-3.4 8.6-8 9.4C7.4 20.6 4 17 4 12V6l8-3.4Z"/><path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" d="M8.5 12.2l2.4 2.4 4.6-4.8"/></symbol>
+<symbol id="ic-truck" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" d="M2 6h11v10H2zM13 10h5l3 3v3h-8z"/><circle cx="6.5" cy="18" r="1.6" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="17" cy="18" r="1.6" fill="none" stroke="currentColor" stroke-width="1.7"/></symbol>
+<symbol id="ic-heart" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" d="M12 20.5S3.5 15.4 3.5 9.4A4.9 4.9 0 0 1 12 6.2a4.9 4.9 0 0 1 8.5 3.2c0 6-8.5 11.1-8.5 11.1Z"/></symbol>
+<symbol id="ic-map" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" d="M12 21.5S5.5 14.8 5.5 10a6.5 6.5 0 0 1 13 0c0 4.8-6.5 11.5-6.5 11.5Z"/><circle cx="12" cy="10" r="2.4" fill="none" stroke="currentColor" stroke-width="1.7"/></symbol>
+<symbol id="ic-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7"/><path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" d="M12 7v5.5l3.5 2"/></symbol>
+<symbol id="ic-phone" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" d="M6.6 3.5 9.8 8 7.4 10.3a13 13 0 0 0 6.3 6.3l2.3-2.4 4.5 3.2-1.1 3a4 4 0 0 1-4.6 2.5C8.4 21.2 2.8 15.6 2.1 9.2A4 4 0 0 1 4.6 4.6Z"/></symbol>
+<symbol id="ic-spark" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2l1.9 6.4L20 10l-6.1 1.6L12 18l-1.9-6.4L4 10l6.1-1.6Z"/></symbol>
+<symbol id="ic-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2" fill="none" stroke="currentColor" stroke-width="1.7"/><path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" d="M2.8 20c.8-3.6 3.4-5.6 6.2-5.6s5.4 2 6.2 5.6"/><circle cx="17" cy="8.6" r="2.4" fill="none" stroke="currentColor" stroke-width="1.6"/><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" d="M16.2 14.7c2.4.3 4.2 2 4.9 4.9"/></symbol>
+<symbol id="ic-star" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" d="M12 3.5l2.6 5.4 5.9.7-4.3 4.1 1.1 5.9L12 16.7l-5.3 2.9 1.1-5.9-4.3-4.1 5.9-.7Z"/></symbol>
+<symbol id="ic-shirt" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" d="M8 3 3 6.5 5.5 10 8 8.5V21h8V8.5l2.5 1.5L21 6.5 16 3c-.6 1.4-2.1 2.3-4 2.3S8.6 4.4 8 3Z"/></symbol>
+<symbol id="ic-empty-cart" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1.4" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="18" cy="21" r="1.4" fill="none" stroke="currentColor" stroke-width="1.5"/><path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" d="M2.5 3h2.4l2.6 12.4a2 2 0 0 0 2 1.6h7.9a2 2 0 0 0 2-1.6L21 7H6.2"/></symbol>
+</defs>
+</svg>
+<script src="/assets/js/config.js"></script>
+<script src="/assets/js/catalogo.js"></script>
+<script src="/assets/js/sitio.js" defer></script>
+<script src="/assets/js/checkout.js" defer></script>
+</body>
+</html>

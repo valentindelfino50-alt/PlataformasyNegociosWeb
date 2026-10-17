@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 """Genera la carpeta de vista previa para el artefacto de Claude a partir de funnyfoot-sitio/.
 
-Es una copia del sitio con dos diferencias: los enlaces son relativos a archivos
-(el artefacto no sirve rutas absolutas ni carpetas) y se agrega vista-previa.js,
-que avisa que los formularios se envían a Netlify solo en el sitio publicado.
+Es una copia del sitio con estas diferencias: los enlaces son relativos a archivos
+(el artefacto no sirve rutas absolutas ni carpetas), se marca como vista previa
+(el checkout no envía el pedido y el panel solo funciona en modo demostración) y
+se agrega vista-previa.js, que avisa que los formularios se envían a Netlify solo
+en el sitio publicado.
 
 Uso:  python3 fuentes-del-sitio/generar_vista_previa.py <carpeta_de_salida>
 Después se publica <carpeta_de_salida>/index.html como artefacto, con todos los
@@ -51,12 +53,15 @@ for d, _, fs in os.walk(OUT):
             continue
         p = os.path.join(d, f)
         depth = len(os.path.relpath(p, OUT).split(os.sep)) - 1
+        pre = '../' * depth
         s = open(p, encoding='utf-8').read()
         s = re.sub(r'\b(href|src|action)="(/[^"#?]*)"', lambda m: '%s="%s"' % (m.group(1), rel(m.group(2), depth)), s)
-        pre = '../' * depth
+        meta = '<meta name="ff-base" content="/">'
+        assert meta in s, p
+        s = s.replace(meta, '<meta name="ff-base" content="%s">\n<meta name="ff-preview" content="1">' % pre, 1)
         tag = '<script src="%sassets/js/sitio.js" defer></script>' % pre
-        assert tag in s, p
-        s = s.replace(tag, tag + '\n<script src="%sassets/js/vista-previa.js" defer></script>' % pre, 1)
+        if tag in s:
+            s = s.replace(tag, tag + '\n<script src="%sassets/js/vista-previa.js" defer></script>' % pre, 1)
         open(p, 'w', encoding='utf-8').write(s)
 
 print('Vista previa generada en', OUT)

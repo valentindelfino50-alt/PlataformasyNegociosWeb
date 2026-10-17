@@ -1,0 +1,5 @@
+# Netlify regenera las páginas del sitio a partir de funnyfoot-sitio/datos/productos.json
+# (lo que edita el panel de administración) y publica la carpeta funnyfoot-sitio.
+[build]
+  command = "python3 fuentes-del-sitio/build_site.py"
+  publish = "funnyfoot-sitio"

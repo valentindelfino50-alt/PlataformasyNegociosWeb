@@ -1,11 +1,25 @@
-/* Funny Foot: carrito, pedido por WhatsApp, búsqueda, menú y medición. */
+/* Funny Foot: carrito, galería de producto, buscador, menú y medición de Google.
+   Usa el catálogo generado en assets/js/catalogo.js (window.FF_CATALOGO). */
 (function () {
   'use strict';
+
   var CFG = window.FUNNYFOOT || {};
-  var PRODUCTS = [{"id": 1, "name": "Frozen FOOTY Corazón Lila con luz al pisar", "price": 72900}, {"id": 2, "name": "Frozen FOOTY Together Celeste con luz al pisar", "price": 72900}, {"id": 3, "name": "Stitch FOOTY Good Vibes Fucsia con luz al pisar", "price": 72900}, {"id": 4, "name": "Minnie FOOTY Star Lila con luz al pisar", "price": 72900}, {"id": 5, "name": "Zapatilla FOOTY Cars Race Rojo con luz al pisar", "price": 72900}, {"id": 6, "name": "Zapatilla POP FOOTY Mickey Azul Smiles con luz al pisar", "price": 48000}, {"id": 7, "name": "FOOTY Multi Star con luz al pisar", "price": 74000}, {"id": 8, "name": "FORKI 04 Borcegos Nena Glitter Negro Charol FERLI", "price": 46000}, {"id": 9, "name": "GOBBY 07 Botitas Nena con Luces LED FERLI", "price": 46000}, {"id": 10, "name": "Botita FERLI Benson", "price": 46000}, {"id": 11, "name": "Pantubotas Nenas FERLI Piel abrigada", "price": 74000}, {"id": 12, "name": "LENA 03 Zapatillas con luces LED niñas FERLI", "price": 48000}, {"id": 13, "name": "MARILU 01 Zapatillas Nena Cordón Elastizado FERLI", "price": 59000}, {"id": 14, "name": "Zapatillas FERLI cierre de abrojo y elástico", "price": 59000}, {"id": 15, "name": "Zapatillas JAGUAR Oficial Deportiva art. 4020", "price": 45000}, {"id": 16, "name": "Zapatillas JAGUAR Urbana Kids art. 4031", "price": 45000}];
+  var CAT = window.FF_CATALOGO || { config: {}, productos: [] };
+  var CONF = CAT.config || {};
+  var MAX_QTY = 10;
+
+  var metaBase = document.querySelector('meta[name="ff-base"]');
+  var BASE = metaBase ? metaBase.content : '/';
+  var PREVIEW = !!document.querySelector('meta[name="ff-preview"]');
+  /* En la vista previa de Claude las páginas son archivos (index.html); en el sitio real, carpetas. */
+  function pageUrl(p) { return BASE + p + (PREVIEW ? 'index.html' : ''); }
+  function assetUrl(p) { return BASE + p; }
 
   function money(n) { return '$' + Math.round(n).toLocaleString('es-AR'); }
-  function byId(id) { for (var i = 0; i < PRODUCTS.length; i++) { if (PRODUCTS[i].id === id) return PRODUCTS[i]; } return null; }
+  function byId(id) {
+    for (var i = 0; i < CAT.productos.length; i++) { if (CAT.productos[i].id === id) return CAT.productos[i]; }
+    return null;
+  }
   function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
   function $(id) { return document.getElementById(id); }
 
@@ -23,30 +37,59 @@
     ids.forEach(function (id) { window.gtag('config', id); });
   }
   function track(name, params) { try { if (window.gtag) window.gtag('event', name, params || {}); } catch (e) {} }
-  function convert(label) { try { if (window.gtag && CFG.ADS_ID && label) window.gtag('event', 'conversion', { send_to: CFG.ADS_ID + '/' + label }); } catch (e) {} }
+  function convert(label, extra) {
+    try {
+      if (window.gtag && CFG.ADS_ID && label) {
+        var p = { send_to: CFG.ADS_ID + '/' + label };
+        for (var k in (extra || {})) { p[k] = extra[k]; }
+        window.gtag('event', 'conversion', p);
+      }
+    } catch (e) {}
+  }
   loadGoogleTag();
 
   /* ---------- carrito ---------- */
   var CART = [];
+  var removedMsg = false;
   try {
     var saved = JSON.parse(localStorage.getItem('funnyfoot_cart') || '[]');
     if (Array.isArray(saved)) {
-      CART = saved.filter(function (i) { return i && byId(i.id) && i.size && i.qty > 0; })
-        .map(function (i) { return { id: i.id, size: String(i.size).slice(0, 4), qty: Math.min(parseInt(i.qty, 10) || 1, 20) }; });
+      saved.forEach(function (i) {
+        var p = i && byId(i.id);
+        var size = i && parseInt(i.size, 10);
+        if (!p || p.agotado || !size || p.talles.indexOf(size) === -1 || !(i.qty > 0)) { removedMsg = true; return; }
+        CART.push({ id: p.id, size: String(size), qty: Math.min(parseInt(i.qty, 10) || 1, MAX_QTY) });
+      });
     }
   } catch (e) { CART = []; }
   function saveCart() { try { localStorage.setItem('funnyfoot_cart', JSON.stringify(CART)); } catch (e) {} }
-  function total() { return CART.reduce(function (s, i) { return s + byId(i.id).price * i.qty; }, 0); }
+
+  function subtotal() { return CART.reduce(function (s, i) { return s + byId(i.id).precio * i.qty; }, 0); }
   function count() { return CART.reduce(function (n, i) { return n + i.qty; }, 0); }
 
-  function orderText() {
-    var lines = ['Hola Funny Foot! Quiero hacer este pedido:', ''];
-    CART.forEach(function (i) {
+  /* Cálculo único del total, usado por el carrito y por el checkout. */
+  function totals(entrega, pago) {
+    var sub = subtotal();
+    var desc = (pago === 'transferencia' && CONF.descuentoTransferencia) ? Math.round(sub * CONF.descuentoTransferencia / 100) : 0;
+    var envio = 0;
+    if (entrega !== 'retiro' && sub > 0) {
+      envio = (CONF.envioGratisDesde && sub >= CONF.envioGratisDesde) ? 0 : (CONF.costoEnvio || 0);
+    }
+    return { subtotal: sub, descuento: desc, envio: envio, total: sub - desc + envio };
+  }
+
+  function waLink(text) {
+    return 'https://wa.me/' + encodeURIComponent(CONF.whatsapp || '') + (text ? '?text=' + encodeURIComponent(text) : '');
+  }
+  function orderLines() {
+    return CART.map(function (i) {
       var p = byId(i.id);
-      lines.push('• ' + i.qty + ' x ' + p.name + ' (talle ' + i.size + ') - ' + money(p.price * i.qty));
+      return i.qty + ' x ' + p.nombre + ' (talle ' + i.size + ') - ' + money(p.precio * i.qty);
     });
-    lines.push('', 'Total de productos: ' + money(total()), '', 'Mi nombre:', 'Entrega (envío a domicilio o retiro en el local):');
-    return lines.join('\n');
+  }
+  function quickOrderText() {
+    return ['Hola ' + (CONF.nombre || '') + '! Quiero hacer este pedido:', ''].concat(orderLines().map(function (l) { return '• ' + l; }),
+      ['', 'Total de productos: ' + money(subtotal()), '', 'Mi nombre:', 'Entrega (envío a domicilio o retiro en el local):']).join('\n');
   }
 
   var toastTimer;
@@ -55,7 +98,20 @@
     $('toastMsg').textContent = msg;
     t.classList.add('show');
     clearTimeout(toastTimer);
-    toastTimer = setTimeout(function () { t.classList.remove('show'); }, 2200);
+    toastTimer = setTimeout(function () { t.classList.remove('show'); }, 2600);
+  }
+
+  var SVGNS = 'http://www.w3.org/2000/svg';
+  function thumb(p) {
+    var box = el('div', 'ci-media');
+    if (p.imagen) {
+      var img = el('img'); img.src = assetUrl(p.imagen); img.alt = ''; img.loading = 'lazy'; box.appendChild(img);
+    } else {
+      var svg = document.createElementNS(SVGNS, 'svg'); svg.setAttribute('viewBox', '0 0 120 80');
+      svg.style.color = p.color || '#ED0B6F';
+      var use = document.createElementNS(SVGNS, 'use'); use.setAttribute('href', '#ic-sneaker'); svg.appendChild(use); box.appendChild(svg);
+    }
+    return box;
   }
 
   function renderCart() {
@@ -74,53 +130,58 @@
     CART.forEach(function (item, idx) {
       var p = byId(item.id);
       var row = el('div', 'cart-item');
+      row.appendChild(thumb(p));
       var info = el('div', 'ci-info');
-      info.appendChild(el('b', null, p.name));
-      info.appendChild(el('span', null, 'Talle ' + item.size + ' · ' + money(p.price)));
+      info.appendChild(el('b', null, p.nombre));
+      info.appendChild(el('span', null, 'Talle ' + item.size + ' · ' + money(p.precio)));
       var r = el('div', 'ci-row');
       var step = el('div', 'qty-stepper');
       var minus = el('button', null, '−'); minus.type = 'button'; minus.setAttribute('aria-label', 'Quitar una unidad');
       minus.addEventListener('click', function () { changeQty(idx, -1); });
       var plus = el('button', null, '+'); plus.type = 'button'; plus.setAttribute('aria-label', 'Sumar una unidad');
+      plus.disabled = item.qty >= MAX_QTY;
       plus.addEventListener('click', function () { changeQty(idx, 1); });
       step.appendChild(minus); step.appendChild(el('span', null, String(item.qty))); step.appendChild(plus);
       var rm = el('button', 'ci-remove', 'Quitar'); rm.type = 'button';
       rm.addEventListener('click', function () { CART.splice(idx, 1); saveCart(); renderCart(); });
-      r.appendChild(step); r.appendChild(rm);
+      r.appendChild(step); r.appendChild(el('b', null, money(p.precio * item.qty))); r.appendChild(rm);
       info.appendChild(r);
       row.appendChild(info);
       body.appendChild(row);
     });
     var rowT = el('div', 'row total');
-    rowT.appendChild(el('span', null, 'Total de productos')); rowT.appendChild(el('span', null, money(total())));
+    rowT.appendChild(el('span', null, 'Subtotal')); rowT.appendChild(el('span', null, money(subtotal())));
     foot.appendChild(rowT);
-    foot.appendChild(el('p', 'drawer-note', 'Enviás el pedido por WhatsApp y coordinamos disponibilidad, envío y pago. En este sitio no se cobra nada.'));
-    var wa = el('a', 'btn btn-wa btn-block', 'Enviar pedido por WhatsApp');
-    wa.id = 'waOrder';
-    wa.target = '_blank'; wa.rel = 'noopener';
-    wa.href = 'https://wa.me/' + encodeURIComponent(CFG.WHATSAPP || '') + '?text=' + encodeURIComponent(orderText());
-    wa.addEventListener('click', function () {
-      track('begin_checkout', { currency: 'ARS', value: total() });
-      track('whatsapp_pedido', { value: total(), currency: 'ARS' });
-      convert(CFG.ADS_LABEL_WHATSAPP);
-    });
+    foot.appendChild(el('p', 'drawer-note', 'El envío y el medio de pago se eligen al finalizar la compra.'));
+    var go = el('a', 'btn btn-pink btn-block', 'Finalizar compra');
+    go.id = 'goCheckout'; go.href = pageUrl('checkout/');
+    foot.appendChild(go);
+    var wa = el('a', 'drawer-wa', 'Prefiero pedir por WhatsApp');
+    wa.id = 'waOrder'; wa.target = '_blank'; wa.rel = 'noopener'; wa.href = waLink(quickOrderText());
+    wa.addEventListener('click', function () { track('whatsapp_pedido', { value: subtotal(), currency: 'ARS' }); convert(CFG.ADS_LABEL_WHATSAPP); });
     foot.appendChild(wa);
   }
   function changeQty(idx, d) {
     CART[idx].qty += d;
     if (CART[idx].qty <= 0) CART.splice(idx, 1);
-    if (CART[idx] && CART[idx].qty > 20) CART[idx].qty = 20;
+    else if (CART[idx].qty > MAX_QTY) CART[idx].qty = MAX_QTY;
     saveCart(); renderCart();
   }
   function addToCart(id, size) {
+    var p = byId(id);
+    if (!p) return;
+    if (p.agotado) { toast('Este producto está agotado'); return; }
     var found = null;
     CART.forEach(function (i) { if (i.id === id && i.size === size) found = i; });
-    if (found) found.qty = Math.min(found.qty + 1, 20); else CART.push({ id: id, size: size, qty: 1 });
+    if (found) {
+      if (found.qty >= MAX_QTY) { toast('Máximo ' + MAX_QTY + ' unidades por modelo y talle'); return; }
+      found.qty++;
+    } else { CART.push({ id: id, size: size, qty: 1 }); }
     saveCart(); renderCart();
-    var p = byId(id);
-    track('add_to_cart', { currency: 'ARS', value: p.price, items: [{ item_id: String(p.id), item_name: p.name, price: p.price, quantity: 1 }] });
-    toast('¡Agregado al pedido!');
+    track('add_to_cart', { currency: 'ARS', value: p.precio, items: [{ item_id: String(p.id), item_name: p.nombre, price: p.precio, quantity: 1 }] });
+    toast('¡Agregado al carrito!');
   }
+  function clearCart() { CART = []; saveCart(); renderCart(); }
 
   /* cajón del carrito */
   var drawer = $('cartDrawer'), overlay = $('overlay'), lastFocus = null;
@@ -140,7 +201,7 @@
   if (overlay) overlay.addEventListener('click', closeDrawer);
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { closeDrawer(); closeNav(); } });
 
-  /* botones "agregar" de las tarjetas */
+  /* botones "agregar" de tarjetas y de la ficha de producto */
   document.addEventListener('click', function (e) {
     var btn = e.target.closest ? e.target.closest('[data-add]') : null;
     if (!btn) return;
@@ -149,6 +210,15 @@
     if (!sel || !sel.value) { if (sel) { sel.style.borderColor = 'var(--pink)'; sel.focus(); } toast('Elegí un talle primero'); return; }
     sel.style.borderColor = '';
     addToCart(id, sel.value);
+  });
+
+  /* fotos de la ficha de producto */
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest ? e.target.closest('[data-thumb]') : null;
+    var main = $('pdpMain');
+    if (!t || !main) return;
+    main.src = assetUrl(t.getAttribute('data-thumb').replace(/^\//, ''));
+    Array.prototype.forEach.call(document.querySelectorAll('.pdp-thumb'), function (b) { b.classList.toggle('active', b === t); });
   });
 
   /* clics en enlaces de WhatsApp (no del carrito) */
@@ -189,5 +259,14 @@
     if (!done) { track('generate_lead'); convert(CFG.ADS_LABEL_LEAD); }
   }
 
+  saveCart();
   renderCart();
+  if (removedMsg) { toast('Quitamos del carrito productos que ya no están disponibles'); }
+
+  /* API para checkout.js */
+  window.FF = {
+    conf: CONF, byId: byId, money: money, pageUrl: pageUrl, assetUrl: assetUrl, preview: PREVIEW,
+    cart: function () { return CART.slice(); }, clearCart: clearCart, totals: totals, count: count,
+    waLink: waLink, orderLines: orderLines, track: track, convert: convert, cfg: CFG, maxQty: MAX_QTY
+  };
 })();
