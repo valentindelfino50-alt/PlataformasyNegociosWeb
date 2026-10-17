@@ -3,3 +3,7 @@
 [build]
   command = "python3 fuentes-del-sitio/build_site.py"
   publish = "funnyfoot-sitio"
+
+# Servicio del panel de administración (valida usuario y código y publica en GitHub).
+[functions]
+  directory = "netlify/functions"

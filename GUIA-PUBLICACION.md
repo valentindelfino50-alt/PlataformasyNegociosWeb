@@ -15,7 +15,7 @@ La carpeta **`funnyfoot-sitio/`** es el sitio completo. El resto del repositorio
 ## 2. Cómo funciona (para entender qué se puede esperar)
 
 1. El catálogo está en `funnyfoot-sitio/datos/productos.json` y las fotos en `funnyfoot-sitio/assets/productos/`.
-2. El panel `/admin/` edita ese archivo y sube las fotos al repositorio de GitHub con **una sola publicación por vez**.
+2. El panel `/admin/` edita ese archivo y sube las fotos al repositorio de GitHub, con **una sola publicación por vez**. Se entra con un usuario y un código; una función de Netlify (`netlify/functions/admin.js`) valida el acceso y publica con una clave guardada en secreto.
 3. Netlify detecta el cambio, ejecuta `fuentes-del-sitio/build_site.py` (definido en `netlify.toml`), regenera las páginas y publica el sitio. Tarda 1 o 2 minutos.
 4. Los pedidos llegan a Netlify Forms (panel **Forms → pedido**) y por email si activás el aviso.
 
@@ -29,7 +29,27 @@ No hay servidor propio ni base de datos. Es una tienda estática, por eso es rá
 4. Los campos de build ya vienen definidos en `netlify.toml`: comando `python3 fuentes-del-sitio/build_site.py` y carpeta `funnyfoot-sitio`. Dejalos como aparecen.
 5. Poné un nombre de proyecto (por ejemplo `funnyfoot-caballito`) y tocá **Deploy**.
 6. Si el deploy falla, abrí el registro del deploy en **Deploys** y mandáselo a Claude. La causa más probable es que no encuentre `python3`.
-7. Entrá al panel (`/admin/`, ver sección 5) y en **Negocio y envíos** cargá la dirección real del sitio (`https://tu-nombre.netlify.app`) y publicá.
+7. Configurá el acceso al panel (siguiente apartado, se hace una sola vez).
+8. Entrá al panel (`/admin/`, ver sección 5) y en **Negocio y envíos** cargá la dirección real del sitio (`https://tu-nombre.netlify.app`) y publicá.
+
+### Acceso al panel de administración (una sola vez)
+El panel entra con el usuario **PlataformasyNegocios** y un código que vos elegís. El código y la clave de GitHub **no están en el sitio ni en el repositorio**: se guardan en las variables de entorno de Netlify.
+
+1. Creá un token de GitHub en [github.com/settings/personal-access-tokens/new](https://github.com/settings/personal-access-tokens/new):
+   - **Repository access:** *Only select repositories* y marcá el repositorio del sitio.
+   - **Permissions → Repository permissions → Contents:** *Read and write*.
+   - Elegí un vencimiento (por ejemplo 1 año), generá el token y copialo.
+2. En Netlify andá a **Project configuration → Environment variables → Add a variable** y cargá dos variables:
+
+| Variable | Valor |
+|---|---|
+| `GITHUB_TOKEN` | el token que acabás de copiar |
+| `ADMIN_CODE` | el código de ingreso que quieras (mínimo 8 caracteres, mejor 12 o más) |
+
+3. En **Deploys → Trigger deploy → Deploy project** para que tome las variables.
+4. Entrá a `https://tu-sitio/admin/`, con usuario `PlataformasyNegocios` y tu código.
+
+Variables opcionales: `ADMIN_USER` (cambia el usuario), `GITHUB_BRANCH` (si el sitio se publica desde otra rama) y `GITHUB_REPO`.
 
 ### Formularios
 1. En Netlify abrí **Forms**: tienen que aparecer `pedido`, `contacto`, `suscripcion` y `sugerencias`.
@@ -55,13 +75,12 @@ Google Ads exige datos del negocio reales y verificables. Hoy el sitio tiene los
 
 ## 5. Panel de administración (`/admin/`)
 
-### Para entrar
-1. Creá un token en [github.com/settings/personal-access-tokens/new](https://github.com/settings/personal-access-tokens/new).
-2. En **Repository access** elegí **Only select repositories** y marcá el repositorio del sitio.
-3. En **Permissions → Repository permissions** poné **Contents: Read and write**.
-4. Elegí un vencimiento (por ejemplo 90 días), generá el token y pegalo en el panel.
-
-El token se guarda **solo en el navegador** de quien lo usa y solo se envía a GitHub. **Quien tenga el token puede modificar el sitio**: no lo compartas ni lo dejes en computadoras ajenas. Para dar acceso a otra persona, agregala como colaboradora del repositorio y que cree su propio token.
+### Cómo entrar
+- Dirección: `https://tu-sitio/admin/`. No hay ningún botón visible en el sitio.
+- Acceso escondido: tocá **5 veces seguidas el símbolo © del pie de página** y te lleva al panel.
+- Usuario: `PlataformasyNegocios`. Código: el que definiste en `ADMIN_CODE`.
+- La sesión dura hasta 12 horas. Podés tildar “Mantener la sesión abierta en este equipo” para no volver a escribir el código.
+- Para dar acceso a otra persona alcanza con pasarle el usuario y el código. Para quitárselo, cambiá `ADMIN_CODE` en Netlify y volvé a publicar: todas las sesiones abiertas se cierran.
 
 ### Qué se puede hacer
 - **Productos:** crear, editar, duplicar y eliminar. Nombre, categoría, precio, talles (`23-28` o `23, 24, 26`), color, descripción, hasta 6 fotos (la primera es la principal), y las opciones *mostrar en la tienda*, *agotado*, *destacado en el inicio* y *luz LED*.
@@ -70,10 +89,13 @@ El token se guarda **solo en el navegador** de quien lo usa y solo se envía a G
 - **Negocio y envíos:** datos de contacto, costos de envío, descuentos, medios de pago y datos para transferir.
 - **Publicar:** muestra un resumen de los cambios y los sube de una vez. Si alguien publicó otra versión mientras editabas, avisa y no pisa nada.
 
-### Qué conviene saber
-- Cada publicación genera un deploy en Netlify. Cargá varios cambios y publicá una sola vez.
-- Los cambios tardan 1 o 2 minutos en verse en el sitio.
-- “Probar sin conectar” abre el panel con el catálogo actual para conocerlo; no guarda nada.
+### Seguridad: qué tener en cuenta
+- Quien tenga el usuario y el código puede cambiar productos, precios y datos de contacto (incluido el WhatsApp). Usá un código largo y no lo publiques.
+- El servicio solo puede escribir `datos/productos.json` y fotos JPG dentro de `assets/productos/`. No puede tocar el código del sitio ni otros archivos.
+- Un intento fallido de ingreso demora un poco la respuesta, pero no bloquea la cuenta: por eso conviene un código largo.
+- Si el token de GitHub vence, el panel avisa “El token de GitHub configurado en Netlify no es válido o venció”. Generá uno nuevo y actualizá `GITHUB_TOKEN` en Netlify.
+- Cada publicación genera un deploy en Netlify. Cargá varios cambios y publicá una sola vez. Los cambios tardan 1 o 2 minutos en verse.
+- “Probar sin ingresar” abre el panel con el catálogo actual para conocerlo; no guarda nada.
 
 ## 6. Cómo es la compra
 
@@ -127,7 +149,8 @@ funnyfoot-sitio/            ← lo que se publica
   assets/productos/         ← fotos subidas desde el panel
   assets/js/config.js       ← IDs de Google Analytics y Ads
   admin/                    ← panel de administración
-netlify.toml                ← comando de build y carpeta publicada
+netlify.toml                ← comando de build, carpeta publicada y carpeta de funciones
+netlify/functions/admin.js  ← servicio del panel (valida usuario y código, publica en GitHub)
 fuentes-del-sitio/          ← generador de páginas y de la vista previa
 GUIA-PUBLICACION.md         ← esta guía
 ```

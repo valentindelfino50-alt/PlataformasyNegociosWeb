@@ -274,7 +274,7 @@ def footer_tpl():
       </div>
     </div>
     <div class="foot-bottom">
-      <span>© 2026 %(n)s. Todos los derechos reservados.</span>
+      <span id="copyAdmin">© 2026 %(n)s. Todos los derechos reservados.</span>
       <span>Sitio desarrollado como parte de un trabajo práctico — Plataformas y Negocios Web</span>
     </div>
   </div>

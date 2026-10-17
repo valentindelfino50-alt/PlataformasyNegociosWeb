@@ -259,6 +259,17 @@
     if (!done) { track('generate_lead'); convert(CFG.ADS_LABEL_LEAD); }
   }
 
+  /* acceso escondido al panel: 5 toques seguidos sobre el © del pie de página */
+  var copy = $('copyAdmin');
+  if (copy) {
+    var taps = [];
+    copy.addEventListener('click', function () {
+      var now = Date.now();
+      taps = taps.filter(function (t) { return now - t < 4000; }); taps.push(now);
+      if (taps.length >= 5) { taps = []; window.location.href = pageUrl('admin/'); }
+    });
+  }
+
   saveCart();
   renderCart();
   if (removedMsg) { toast('Quitamos del carrito productos que ya no están disponibles'); }

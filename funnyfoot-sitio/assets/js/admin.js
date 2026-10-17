@@ -1,13 +1,14 @@
 /* Panel de administración de Funny Foot.
  *
- * Qué hace: edita datos/productos.json y sube fotos al repositorio de GitHub del sitio (un solo "commit" por publicación).
+ * Qué hace: edita datos/productos.json y sube fotos al sitio. Entra con usuario y código; el servidor
+ * (netlify/functions/admin.js) valida el acceso y publica en GitHub con una clave que NO está en el sitio.
  * Netlify detecta el cambio, regenera las páginas con fuentes-del-sitio/build_site.py y publica el sitio.
- * No hay servidor propio: el acceso lo da un token personal de GitHub que se guarda solo en este navegador.
  */
 (function () {
   'use strict';
 
-  var DEFAULTS = { repo: 'valentindelfino50-alt/PlataformasyNegociosWeb', branch: 'claude/fervent-ptolemy-r4iap9', dir: 'funnyfoot-sitio' };
+  var API = '/.netlify/functions/admin';
+  var USUARIO = 'PlataformasyNegocios';
   var MAX_FOTOS = 6;
   var ICONOS = [['spark', 'Destello'], ['shield', 'Escudo'], ['heart', 'Corazón'], ['star', 'Estrella'], ['shirt', 'Prenda'], ['users', 'Personas']];
   var SNEAKER = '<svg viewBox="0 0 120 80" aria-hidden="true" style="color:%C"><g fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><line x1="2" y1="26" x2="16" y2="26"/><line x1="2" y1="34" x2="20" y2="34"/><path d="M28 46 C30 36 36 24 46 18 C50 24 58 27 66 27 L66 20 C74 20 84 24 92 32 C100 39 106 40 112 40 C114 48 112 58 104 62 L34 62 C28 62 26 54 28 46 Z"/><path d="M34 62 L34 68 L112 68 L112 60"/></g></svg>';
@@ -40,8 +41,8 @@
 
   /* ------------------------------------------------------------------ estado */
   var S = {
-    mode: '',            // 'github' | 'demo'
-    gh: null, conf: null,
+    mode: '',            // 'sitio' | 'demo'
+    session: '',
     data: null,          // copia de trabajo
     orig: '',            // JSON normalizado tal como se cargó
     baseSha: '',         // sha de datos/productos.json en la rama
@@ -52,72 +53,46 @@
     publishing: false
   };
 
-  /* ------------------------------------------------------------------ GitHub */
-  function GitHub(conf, token) {
-    var root = 'https://api.github.com/repos/' + conf.repo;
-    function call(method, path, body) {
-      var headers = { 'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github+json' };
-      if (body) headers['Content-Type'] = 'application/json';
-      return fetch(root + path, { method: method, headers: headers, body: body ? JSON.stringify(body) : undefined, cache: 'no-store' }).then(function (res) {
-        if (res.status === 204) return null;
-        return res.json().catch(function () { return {}; }).then(function (j) {
-          if (!res.ok) { var e = new Error(j.message || ('HTTP ' + res.status)); e.status = res.status; throw e; }
-          return j;
-        });
-      });
-    }
-    return { get: function (p) { return call('GET', p); }, post: function (p, b) { return call('POST', p, b); }, patch: function (p, b) { return call('PATCH', p, b); } };
+  /* ------------------------------------------------------------------ servidor */
+  function sessionToken() { return getItem('ff_admin_sesion'); }
+  function sessionValid(tok) {
+    var m = /^([a-z0-9]+)\./.exec(tok || '');
+    return !!m && parseInt(m[1], 36) > Date.now() + 60000;
+  }
+  async function api(action, body) {
+    var headers = { 'Content-Type': 'application/json' };
+    if (action !== 'login' && S.session) headers['Authorization'] = 'Bearer ' + S.session;
+    var res;
+    try { res = await fetch(API, { method: 'POST', headers: headers, body: JSON.stringify(Object.assign({ action: action }, body || {})) }); }
+    catch (e) { var ne = new Error('red'); ne.network = true; throw ne; }
+    var j = {};
+    try { j = await res.json(); } catch (e) { j = {}; }
+    if (!res.ok) { var err = new Error(j.message || ('HTTP ' + res.status)); err.status = res.status; err.code = j.error; throw err; }
+    return j;
   }
   function explain(e) {
+    if (e && e.network) return 'No se pudo conectar con el servidor. Revisá tu conexión e intentá de nuevo.';
     var s = e && e.status;
-    if (s === 401) return 'El token no es válido o venció. Generá uno nuevo en GitHub.';
-    if (s === 403) return 'El token no tiene permiso para escribir en este repositorio. Tiene que tener "Contents: Read and write".';
-    if (s === 404) return 'No se encontró el repositorio, la rama o el archivo del catálogo. Revisá el repositorio y la rama; si es privado, el token tiene que tener acceso.';
-    if (s === 409 || s === 422) return 'Se publicó otra versión mientras editabas. Recargá el panel para traer los últimos cambios y volvé a hacer los tuyos.';
-    if (e && e.custom) return e.message;
-    return 'No se pudo conectar con GitHub. Revisá tu conexión e intentá de nuevo.';
-  }
-  function decodeB64(b64) {
-    var bin = atob(String(b64).replace(/\s/g, ''));
-    var bytes = new Uint8Array(bin.length);
-    for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
-    return new TextDecoder('utf-8').decode(bytes);
-  }
-  function encPath(p) { return p.split('/').map(encodeURIComponent).join('/'); }
-  function dataPath(conf) { return conf.dir.replace(/^\/+|\/+$/g, '') + '/datos/productos.json'; }
-
-  async function loadFromGitHub(conf, token) {
-    var gh = GitHub(conf, token);
-    var repo = await gh.get('');
-    if (repo && repo.permissions && repo.permissions.push === false) {
-      var err = new Error('El token solo puede leer el repositorio. Necesita permiso de escritura (Contents: Read and write).'); err.custom = true; throw err;
-    }
-    var file = await gh.get('/contents/' + encPath(dataPath(conf)) + '?ref=' + encodeURIComponent(conf.branch));
-    return { gh: gh, text: decodeB64(file.content), sha: file.sha };
+    if (s && !(e && e.code)) return 'El servicio de administración no está disponible en esta dirección. Funciona en el sitio publicado en Netlify; acá podés usar el modo demostración.';
+    if (s === 401 && e.code === 'credenciales') return 'Usuario o código incorrectos.';
+    if (s === 401) return 'La sesión venció. Volvé a entrar.';
+    if (e && e.message && s) return e.message;
+    return 'Ocurrió un error inesperado. Intentá de nuevo.';
   }
 
-  async function publishToGitHub(files, message, onStep) {
-    var gh = S.gh, conf = S.conf, branch = encPath(conf.branch);
-    onStep('Verificando que nadie haya publicado antes que vos…');
-    var cur = await gh.get('/contents/' + encPath(dataPath(conf)) + '?ref=' + encodeURIComponent(conf.branch));
-    if (cur.sha !== S.baseSha) { var e = new Error('Se publicó otra versión del catálogo mientras editabas. Recargá el panel para traer los últimos cambios.'); e.custom = true; throw e; }
-    var ref = await gh.get('/git/ref/heads/' + branch);
-    var parent = ref.object.sha;
-    var commit = await gh.get('/git/commits/' + parent);
-    var tree = [], jsonSha = '';
+  async function publishViaApi(files, message, onStep) {
+    var entries = [], jsonSha = '';
     for (var i = 0; i < files.length; i++) {
       var f = files[i];
-      if (f.remove) { tree.push({ path: f.path, mode: '100644', type: 'blob', sha: null }); continue; }
+      if (f.remove) { entries.push({ path: f.path, sha: null }); continue; }
       onStep('Subiendo ' + f.path.split('/').pop() + '… (' + (i + 1) + ' de ' + files.length + ')');
-      var blob = await gh.post('/git/blobs', f.base64 ? { content: f.base64, encoding: 'base64' } : { content: f.text, encoding: 'utf-8' });
-      if (f.isData) jsonSha = blob.sha;
-      tree.push({ path: f.path, mode: '100644', type: 'blob', sha: blob.sha });
+      var r = f.isData ? await api('blob', { kind: 'datos', text: f.text }) : await api('blob', { kind: 'foto', base64: f.base64 });
+      if (f.isData) jsonSha = r.sha;
+      entries.push({ path: f.path, sha: r.sha });
     }
     onStep('Creando la publicación…');
-    var newTree = await gh.post('/git/trees', { base_tree: commit.tree.sha, tree: tree });
-    var newCommit = await gh.post('/git/commits', { message: message, tree: newTree.sha, parents: [parent] });
-    await gh.patch('/git/refs/heads/' + branch, { sha: newCommit.sha, force: false });
-    return { sha: newCommit.sha, url: newCommit.html_url || ('https://github.com/' + conf.repo + '/commit/' + newCommit.sha), jsonSha: jsonSha };
+    var c = await api('commit', { entries: entries, message: message, baseSha: S.baseSha });
+    return { sha: c.sha, url: c.url, jsonSha: c.jsonSha || jsonSha };
   }
 
   /* ------------------------------------------------------------------ datos */
@@ -234,28 +209,18 @@
   }
 
   function renderConnect(msg) {
-    var c = S.conf || { repo: DEFAULTS.repo, branch: DEFAULTS.branch, dir: DEFAULTS.dir };
-    var remembered = !!(store('local') && store('local').getItem('ff_admin_token'));
+    var remembered = !!(store('local') && store('local').getItem('ff_admin_sesion'));
     $('admMain').innerHTML = '<div class="adm-connect adm-card">' +
-      '<h1>Panel de administración</h1>' +
-      '<p class="lead">Cargá productos, precios, fotos y categorías. Los cambios se publican en el sitio cuando tocás “Publicar”. Para entrar necesitás un token de GitHub con permiso sobre el repositorio del sitio.</p>' +
+      '<h1>Administración</h1>' +
+      '<p class="lead">Ingresá con el usuario y el código de administrador para cargar productos, precios y fotos.</p>' +
       '<form id="connectForm" autocomplete="off">' +
-      '<div class="field"><label for="cnToken">Token de GitHub</label><input id="cnToken" type="password" autocomplete="off" required placeholder="github_pat_…" value="' + h(getItem('ff_admin_token')) + '">' +
-      '<small>Se guarda solo en este navegador y nunca se envía a otro lugar que GitHub.</small></div>' +
-      '<label class="adm-check" style="margin-bottom:16px"><input type="checkbox" id="cnRemember"' + (remembered ? ' checked' : '') + '><span>Recordar el token en este equipo (no lo uses en computadoras compartidas)</span></label>' +
-      '<details><summary>Opciones avanzadas</summary>' +
-      '<div class="field"><label for="cnRepo">Repositorio</label><input id="cnRepo" value="' + h(c.repo) + '"></div>' +
-      '<div class="adm-grid-2"><div class="field"><label for="cnBranch">Rama</label><input id="cnBranch" value="' + h(c.branch) + '"></div>' +
-      '<div class="field"><label for="cnDir">Carpeta del sitio</label><input id="cnDir" value="' + h(c.dir) + '"></div></div></details>' +
-      '<div class="adm-actions"><button type="submit" class="btn btn-pink">Conectar</button><button type="button" class="btn btn-quiet" data-act="demo">Probar sin conectar</button></div>' +
+      '<div class="field"><label for="cnUser">Usuario</label><input id="cnUser" autocomplete="username" required value="' + h(USUARIO) + '"></div>' +
+      '<div class="field"><label for="cnCode">Código de ingreso</label><input id="cnCode" type="password" autocomplete="current-password" required autofocus></div>' +
+      '<label class="adm-check" style="margin-bottom:16px"><input type="checkbox" id="cnRemember"' + (remembered ? ' checked' : '') + '><span>Mantener la sesión abierta en este equipo (hasta 12 horas)</span></label>' +
+      '<div class="adm-actions"><button type="submit" class="btn btn-pink">Entrar</button><button type="button" class="btn btn-quiet" data-act="demo">Probar sin ingresar</button></div>' +
       '</form>' +
       (msg ? '<div class="adm-msg error" role="alert">' + h(msg) + '</div>' : '') +
-      '<h2 style="margin-top:26px">¿Cómo consigo el token?</h2>' +
-      '<ol><li>Entrá a <a class="u" target="_blank" rel="noopener" href="https://github.com/settings/personal-access-tokens/new">github.com/settings/personal-access-tokens/new</a>.</li>' +
-      '<li>En “Repository access” elegí <b>Only select repositories</b> y marcá el repositorio del sitio.</li>' +
-      '<li>En “Permissions → Repository permissions” poné <b>Contents: Read and write</b>.</li>' +
-      '<li>Elegí una fecha de vencimiento, generá el token y pegalo acá.</li></ol>' +
-      '<p class="hint">“Probar sin conectar” abre el panel con el catálogo actual para que lo conozcas. Los cambios no se guardan ni se publican.</p>' +
+      '<p class="hint" style="margin-top:22px">“Probar sin ingresar” abre el panel con el catálogo actual para que lo conozcas. Los cambios no se guardan ni se publican.</p>' +
       '</div>';
   }
 
@@ -265,7 +230,7 @@
     var tabs = [['productos', 'Productos'], ['categorias', 'Categorías'], ['negocio', 'Negocio y envíos'], ['publicar', 'Publicar' + (sm.dirty ? ' (' + Math.max(sm.count, 1) + ')' : '')]];
     var body = S.tab === 'productos' ? tabProductos() : S.tab === 'categorias' ? tabCategorias() : S.tab === 'negocio' ? tabNegocio() : tabPublicar();
     $('admMain').innerHTML = '<h1>' + h(S.data.negocio.nombre || 'Funny Foot') + '</h1>' +
-      '<p class="lead">' + (S.mode === 'demo' ? 'Modo demostración: podés probar todo, pero nada se guarda ni se publica.' : 'Conectado a ' + h(S.conf.repo) + ' (' + h(S.conf.branch) + ').') + '</p>' +
+      '<p class="lead">' + (S.mode === 'demo' ? 'Modo demostración: podés probar todo, pero nada se guarda ni se publica.' : 'Sesión iniciada como ' + h(USUARIO) + '.') + '</p>' +
       '<div class="adm-tabs" role="tablist">' + tabs.map(function (t) {
         return '<button type="button" class="adm-tab" role="tab" aria-selected="' + (S.tab === t[0]) + '" data-tab="' + t[0] + '">' + t[1] + '</button>';
       }).join('') + '</div>' + body;
@@ -506,7 +471,7 @@
   /* ---------------------------------------------------------------- publicar */
   async function doPublish() {
     if (S.publishing) return;
-    if (S.mode === 'demo') { toast('En modo demostración no se publica. Conectate con tu token.'); return; }
+    if (S.mode === 'demo') { toast('En modo demostración no se publica. Ingresá con el usuario y el código.'); return; }
     var errs = validateAll(); if (errs.length) { renderShell(); return; }
     var sm = summary(); if (!sm.dirty) return;
     var message = ($('pubMsg') && $('pubMsg').value.trim()) || 'Actualizar el catálogo desde el panel';
@@ -516,55 +481,61 @@
     var pub = document.querySelector('[data-act="publish"]'); if (pub) pub.disabled = true;
     function step(t) { var li = document.createElement('li'); li.className = 'run'; li.textContent = t; log.appendChild(li); var prev = log.children[log.children.length - 2]; if (prev) prev.className = ''; }
     var text = JSON.stringify(S.data, null, 2) + '\n';
-    var files = [{ path: dataPath(S.conf), text: text, isData: true }];
-    sm.upload.forEach(function (p) { files.push({ path: S.conf.dir.replace(/^\/+|\/+$/g, '') + '/' + p, base64: S.pending[p].base64 }); });
-    sm.del.forEach(function (p) { files.push({ path: S.conf.dir.replace(/^\/+|\/+$/g, '') + '/' + p, remove: true }); });
+    var files = [{ path: 'datos/productos.json', text: text, isData: true }];
+    sm.upload.forEach(function (p) { files.push({ path: p, base64: S.pending[p].base64 }); });
+    sm.del.forEach(function (p) { files.push({ path: p, remove: true }); });
     try {
-      var r = await publishToGitHub(files, message, step);
+      var r = await publishViaApi(files, message, step);
       log.lastChild.className = '';
       S.orig = JSON.stringify(JSON.parse(text)); S.pending = {};
       // el sha del archivo de datos pasa a ser el del blob subido
       S.baseSha = r.jsonSha || S.baseSha;
-      result.innerHTML = '<div class="adm-msg ok" role="status"><b>¡Cambios publicados!</b><br>Netlify va a actualizar el sitio en 1 o 2 minutos. <a class="u" target="_blank" rel="noopener" href="' + h(r.url) + '">Ver el cambio en GitHub</a>.</div>';
+      result.innerHTML = '<div class="adm-msg ok" role="status"><b>¡Cambios publicados!</b><br>El sitio se actualiza en 1 o 2 minutos.</div>';
       renderTop(); refreshDirty();
       toast('Cambios publicados');
     } catch (e) {
+      if (e.status === 401 && e.code !== 'credenciales') { logout(explain(e)); S.publishing = false; return; }
       result.innerHTML = '<div class="adm-msg error" role="alert"><b>No se pudo publicar.</b><br>' + h(explain(e)) + '</div>';
       if (pub) pub.disabled = false;
     }
     S.publishing = false;
   }
 
-  /* ---------------------------------------------------------------- arranque / conexión */
-  function startWith(text, sha, mode, conf, gh) {
+  /* ---------------------------------------------------------------- arranque / ingreso */
+  function startWith(text, sha, mode) {
     S.data = normalize(JSON.parse(text)); S.orig = JSON.stringify(JSON.parse(text)); S.baseSha = sha || '';
-    S.mode = mode; S.conf = conf; S.gh = gh || null; S.pending = {}; S.tab = 'productos'; S.editing = null; S.filter = { q: '', cat: '', estado: '' };
+    S.mode = mode; S.pending = {}; S.tab = 'productos'; S.editing = null; S.filter = { q: '', cat: '', estado: '' };
     renderShell();
   }
+  function saveSession(token, remember) {
+    var ss = store('session'), ls = store('local');
+    try { if (ss) ss.setItem('ff_admin_sesion', token); if (remember && ls) ls.setItem('ff_admin_sesion', token); else if (ls) ls.removeItem('ff_admin_sesion'); } catch (e) {}
+  }
+  async function enterWithSession() {
+    var r = await api('load');
+    startWith(r.text, r.sha, 'sitio');
+  }
   async function doConnect() {
-    var conf = { repo: $('cnRepo').value.trim(), branch: $('cnBranch').value.trim(), dir: $('cnDir').value.trim() };
-    var token = $('cnToken').value.trim();
-    if (!/^[\w.-]+\/[\w.-]+$/.test(conf.repo)) { renderConnect('El repositorio tiene que tener el formato usuario/repositorio.'); return; }
-    if (!token) { renderConnect('Pegá tu token de GitHub.'); return; }
-    var btn = document.querySelector('#connectForm button[type=submit]'); btn.disabled = true; btn.textContent = 'Conectando…';
+    var user = $('cnUser').value.trim(), code = $('cnCode').value;
+    var btn = document.querySelector('#connectForm button[type=submit]'); btn.disabled = true; btn.textContent = 'Entrando…';
     try {
-      var r = await loadFromGitHub(conf, token);
-      var remember = $('cnRemember').checked, ss = store('session'), ls = store('local');
-      try { if (ss) ss.setItem('ff_admin_token', token); if (remember && ls) ls.setItem('ff_admin_token', token); else if (ls) ls.removeItem('ff_admin_token'); if (ls) ls.setItem('ff_admin_conf', JSON.stringify(conf)); } catch (e) {}
-      startWith(r.text, r.sha, 'github', conf, r.gh);
-    } catch (e) { S.conf = conf; renderConnect(explain(e)); }
+      var r = await api('login', { usuario: user, codigo: code });
+      S.session = r.token; saveSession(r.token, $('cnRemember').checked);
+      await enterWithSession();
+    } catch (e) { S.session = ''; renderConnect(explain(e)); }
   }
   async function doDemo() {
     try {
       var res = await fetch(BASE + 'datos/productos.json', { cache: 'no-store' });
       if (!res.ok) throw new Error('HTTP ' + res.status);
-      startWith(await res.text(), '', 'demo', { repo: 'modo demostración', branch: '—', dir: DEFAULTS.dir }, null);
+      startWith(await res.text(), '', 'demo');
     } catch (e) { renderConnect('No se pudo cargar el catálogo de demostración.'); }
   }
-  function logout() {
+  function logout(msg) {
     var ss = store('session'), ls = store('local');
-    try { if (ss) ss.removeItem('ff_admin_token'); if (ls) ls.removeItem('ff_admin_token'); } catch (e) {}
-    S.data = null; S.gh = null; renderTop(); renderConnect();
+    try { if (ss) ss.removeItem('ff_admin_sesion'); if (ls) ls.removeItem('ff_admin_sesion'); } catch (e) {}
+    S.data = null; S.session = ''; S.editing = null; $('admModal').innerHTML = ''; document.body.style.overflow = '';
+    renderTop(); renderConnect(typeof msg === 'string' ? msg : '');
   }
 
   /* ---------------------------------------------------------------- eventos */
@@ -648,14 +619,17 @@
   });
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && S.editing) closeModal(); });
   window.addEventListener('beforeunload', function (e) {
-    if (S.data && S.mode === 'github' && summary().dirty) { e.preventDefault(); e.returnValue = ''; }
+    if (S.data && S.mode === 'sitio' && summary().dirty) { e.preventDefault(); e.returnValue = ''; }
   });
 
   /* ---------------------------------------------------------------- inicio */
   (function init() {
-    var saved = null;
-    try { var ls = store('local'); saved = ls && JSON.parse(ls.getItem('ff_admin_conf') || 'null'); } catch (e) { saved = null; }
-    S.conf = saved && saved.repo ? saved : { repo: DEFAULTS.repo, branch: DEFAULTS.branch, dir: DEFAULTS.dir };
-    renderTop(); renderConnect();
+    renderTop();
+    var tok = sessionToken();
+    if (sessionValid(tok)) {
+      S.session = tok;
+      $('admMain').innerHTML = '<p class="adm-loading">Retomando tu sesión…</p>';
+      enterWithSession().catch(function (e) { S.session = ''; renderConnect(e && e.status === 401 ? '' : explain(e)); });
+    } else { renderConnect(); }
   })();
 })();
