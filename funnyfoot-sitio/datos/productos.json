@@ -3,7 +3,7 @@
   "negocio": {
     "nombre": "Funny Foot Calzados",
     "sitioUrl": "https://funnyfoots.netlify.app",
-    "whatsapp": "5491155550199",
+    "whatsapp": "5491126936890",
     "telefonoVisible": "11 5555-0199",
     "direccion1": "Av. Rivadavia 6521",
     "direccion2": "Caballito, Ciudad de Buenos Aires",
@@ -38,23 +38,12 @@
       "descripcion": "Zapatillas con luz LED que se encienden al pisar, con personajes y colores para elegir. Talles {talleMin} al {talleMax}. Funny Foot, Caballito."
     },
     {
-      "id": "botas",
-      "slug": "botas-y-botitas",
-      "nombre": "Botas y botitas FERLI",
-      "h1": "Botas, borcegos y botitas FERLI",
-      "intro": "Botas, borcegos y pantubotas FERLI para el invierno, en varios talles y colores.",
-      "resumen": "Abrigo y resistencia para el invierno",
-      "icono": "shield",
-      "titulo": "Botas y botitas FERLI para niñas | Funny Foot",
-      "descripcion": "Botas, borcegos y botitas FERLI para niñas, en talles {talleMin} al {talleMax}. Elegí tu modelo y pedilo por WhatsApp. Funny Foot, Caballito."
-    },
-    {
       "id": "urbanas",
-      "slug": "zapatillas-urbanas",
-      "nombre": "Urbanas FERLI",
+      "slug": "ferli",
+      "nombre": "FERLI",
       "h1": "Zapatillas urbanas FERLI para el uso diario",
-      "intro": "Zapatillas FERLI pensadas para el uso de todos los días, con cordón elastizado o cierre de abrojo.",
-      "resumen": "Para el uso de todos los días",
+      "intro": "",
+      "resumen": "",
       "icono": "heart",
       "titulo": "Zapatillas urbanas FERLI para niñas | Funny Foot",
       "descripcion": "Zapatillas urbanas FERLI con cordón elastizado o cierre de abrojo, talles {talleMin} al {talleMax}. Pedilas por WhatsApp. Funny Foot, Caballito."
@@ -69,6 +58,51 @@
       "icono": "star",
       "titulo": "Zapatillas deportivas JAGUAR para chicos | Funny Foot",
       "descripcion": "Zapatillas deportivas y urbanas JAGUAR para chicos, talles {talleMin} al {talleMax}. Elegí tu modelo y pedilo por WhatsApp. Funny Foot, Caballito."
+    },
+    {
+      "id": "gummi-c42",
+      "slug": "gummi",
+      "nombre": "Gummi",
+      "h1": "Gummi",
+      "intro": "",
+      "resumen": "",
+      "icono": "spark"
+    },
+    {
+      "id": "wake-sw5",
+      "slug": "wake",
+      "nombre": "Wake",
+      "h1": "Wake",
+      "intro": "",
+      "resumen": "",
+      "icono": "spark"
+    },
+    {
+      "id": "lady-stork-kgu",
+      "slug": "lady-stork",
+      "nombre": "Lady Stork",
+      "h1": "Lady Stork",
+      "intro": "",
+      "resumen": "",
+      "icono": "spark"
+    },
+    {
+      "id": "gowell-zsi",
+      "slug": "gowell",
+      "nombre": "Gowell",
+      "h1": "Gowell",
+      "intro": "",
+      "resumen": "",
+      "icono": "spark"
+    },
+    {
+      "id": "proforce-q3g",
+      "slug": "proforce",
+      "nombre": "Proforce",
+      "h1": "Proforce",
+      "intro": "",
+      "resumen": "",
+      "icono": "spark"
     }
   ],
   "productos": [
@@ -365,6 +399,633 @@
         "assets/productos/p24-nel9gm.jpg",
         "assets/productos/p24-lesl7p.jpg",
         "assets/productos/p24-axrub3.jpg"
+      ],
+      "visible": true,
+      "agotado": false,
+      "destacado": false
+    },
+    {
+      "id": 25,
+      "slug": "zapatillas-fly-camara-de-aire-multicolor",
+      "nombre": "Zapatillas Fly camara de aire multicolor",
+      "categoria": "gummi-c42",
+      "precio": 68000,
+      "talles": [
+        35,
+        36,
+        37,
+        38,
+        39,
+        40
+      ],
+      "color": "#ed0b6f",
+      "colorNombre": "Multicolor",
+      "led": false,
+      "descripcion": "",
+      "imagenes": [
+        "assets/productos/p25-4r7etb.jpg",
+        "assets/productos/p25-l8cea7.jpg",
+        "assets/productos/p25-c2jzap.jpg"
+      ],
+      "visible": true,
+      "agotado": false,
+      "destacado": false
+    },
+    {
+      "id": 26,
+      "slug": "zapatillas-fly-camara-de-aire-violeta",
+      "nombre": "Zapatillas Fly camara de aire violeta",
+      "categoria": "gummi-c42",
+      "precio": 68000,
+      "talles": [
+        35,
+        36,
+        37,
+        38,
+        39,
+        40
+      ],
+      "color": "#ed0b6f",
+      "colorNombre": "Violeta",
+      "led": false,
+      "descripcion": "",
+      "imagenes": [
+        "assets/productos/p26-ytdjdg.jpg",
+        "assets/productos/p26-epecw1.jpg",
+        "assets/productos/p26-8m04jw.jpg"
+      ],
+      "visible": true,
+      "agotado": false,
+      "destacado": false
+    },
+    {
+      "id": 27,
+      "slug": "zapatillas-ray-con-glitter-y-cuero",
+      "nombre": "Zapatillas Ray con glitter y cuero",
+      "categoria": "gummi-c42",
+      "precio": 86000,
+      "talles": [
+        36,
+        37,
+        38,
+        39,
+        40
+      ],
+      "color": "#ed0b6f",
+      "colorNombre": "Negro",
+      "led": false,
+      "descripcion": "",
+      "imagenes": [
+        "assets/productos/p27-zub8y4.jpg",
+        "assets/productos/p27-j7joyx.jpg",
+        "assets/productos/p27-9q159i.jpg",
+        "assets/productos/p27-u8gf2y.jpg"
+      ],
+      "visible": true,
+      "agotado": false,
+      "destacado": false
+    },
+    {
+      "id": 28,
+      "slug": "zapatillas-magic",
+      "nombre": "Zapatillas Magic",
+      "categoria": "gummi-c42",
+      "precio": 68000,
+      "talles": [
+        35,
+        36,
+        37,
+        38,
+        39,
+        40
+      ],
+      "color": "#ed0b6f",
+      "colorNombre": "Negro",
+      "led": false,
+      "descripcion": "",
+      "imagenes": [
+        "assets/productos/p28-f8d200.jpg",
+        "assets/productos/p28-up9vwk.jpg",
+        "assets/productos/p28-zdhz6z.jpg"
+      ],
+      "visible": true,
+      "agotado": false,
+      "destacado": false
+    },
+    {
+      "id": 29,
+      "slug": "zapatillas-elastizado-gris",
+      "nombre": "Zapatillas elastizado Gris",
+      "categoria": "proforce-q3g",
+      "precio": 55000,
+      "talles": [
+        35,
+        36,
+        37,
+        38,
+        39,
+        40
+      ],
+      "color": "#ed0b6f",
+      "colorNombre": "Gris",
+      "led": false,
+      "descripcion": "",
+      "imagenes": [
+        "assets/productos/p29-ao2juy.jpg"
+      ],
+      "visible": true,
+      "agotado": false,
+      "destacado": false
+    },
+    {
+      "id": 30,
+      "slug": "zapatillas-elastizado-negro",
+      "nombre": "Zapatillas elastizado Negro",
+      "categoria": "proforce-q3g",
+      "precio": 55000,
+      "talles": [
+        35,
+        36,
+        37,
+        38,
+        39,
+        40
+      ],
+      "color": "#ed0b6f",
+      "colorNombre": "Negro",
+      "led": false,
+      "descripcion": "",
+      "imagenes": [
+        "assets/productos/p30-gt24gq.jpg"
+      ],
+      "visible": true,
+      "agotado": false,
+      "destacado": false
+    },
+    {
+      "id": 31,
+      "slug": "zapatillas-candela",
+      "nombre": "Zapatillas Candela",
+      "categoria": "lady-stork-kgu",
+      "precio": 68999,
+      "talles": [
+        35,
+        36,
+        37,
+        38,
+        39,
+        40
+      ],
+      "color": "#ed0b6f",
+      "colorNombre": "Negro",
+      "led": false,
+      "descripcion": "",
+      "imagenes": [
+        "assets/productos/p31-r5y3v9.jpg",
+        "assets/productos/p31-k1icic.jpg",
+        "assets/productos/p31-udebdo.jpg"
+      ],
+      "visible": true,
+      "agotado": false,
+      "destacado": false
+    },
+    {
+      "id": 32,
+      "slug": "zapatillas-elastizado-con-camara-de-aire",
+      "nombre": "Zapatillas elastizado con camara de aire",
+      "categoria": "wake-sw5",
+      "precio": 55000,
+      "talles": [
+        35,
+        36,
+        37,
+        38,
+        39,
+        40
+      ],
+      "color": "#ed0b6f",
+      "colorNombre": "Negro",
+      "led": false,
+      "descripcion": "",
+      "imagenes": [
+        "assets/productos/p32-hjoyol.jpg",
+        "assets/productos/p32-6r1h5j.jpg",
+        "assets/productos/p32-b6u6wg.jpg",
+        "assets/productos/p32-ckrmun.jpg"
+      ],
+      "visible": true,
+      "agotado": false,
+      "destacado": false
+    },
+    {
+      "id": 33,
+      "slug": "zapatillas-elastizado-con-strass",
+      "nombre": "Zapatillas elastizado con strass",
+      "categoria": "wake-sw5",
+      "precio": 55500,
+      "talles": [
+        35,
+        36,
+        37,
+        38,
+        39,
+        40
+      ],
+      "color": "#ed0b6f",
+      "colorNombre": "Negro",
+      "led": false,
+      "descripcion": "",
+      "imagenes": [
+        "assets/productos/p33-qoebsq.jpg",
+        "assets/productos/p33-n2cgsk.jpg",
+        "assets/productos/p33-g5movp.jpg",
+        "assets/productos/p33-sbsq04.jpg",
+        "assets/productos/p33-3izkw9.jpg"
+      ],
+      "visible": true,
+      "agotado": false,
+      "destacado": false
+    },
+    {
+      "id": 34,
+      "slug": "zapatillas-shy",
+      "nombre": "Zapatillas Shy",
+      "categoria": "gummi-c42",
+      "precio": 75000,
+      "talles": [
+        35,
+        36,
+        37,
+        38,
+        39,
+        40
+      ],
+      "color": "#ed0b6f",
+      "colorNombre": "Negro",
+      "led": false,
+      "descripcion": "",
+      "imagenes": [
+        "assets/productos/p34-hvsmbr.jpg",
+        "assets/productos/p34-0ua1jj.jpg",
+        "assets/productos/p34-o1ii09.jpg",
+        "assets/productos/p34-ets4be.jpg"
+      ],
+      "visible": true,
+      "agotado": false,
+      "destacado": false
+    },
+    {
+      "id": 35,
+      "slug": "zapatillas-cuero-y-gamuza",
+      "nombre": "Zapatillas cuero y gamuza",
+      "categoria": "gummi-c42",
+      "precio": 75000,
+      "talles": [
+        35,
+        36,
+        37,
+        38,
+        39,
+        40
+      ],
+      "color": "#ed0b6f",
+      "colorNombre": "Beige",
+      "led": false,
+      "descripcion": "",
+      "imagenes": [
+        "assets/productos/p35-r90jfi.jpg",
+        "assets/productos/p35-2it8zs.jpg",
+        "assets/productos/p35-37u7l4.jpg",
+        "assets/productos/p35-lapp18.jpg"
+      ],
+      "visible": true,
+      "agotado": false,
+      "destacado": false
+    },
+    {
+      "id": 36,
+      "slug": "zapatillas-jaguarx",
+      "nombre": "Zapatillas JaguarX",
+      "categoria": "deportivas",
+      "precio": 55000,
+      "talles": [
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35
+      ],
+      "color": "#ed0b6f",
+      "colorNombre": "Negro y Celeste",
+      "led": false,
+      "descripcion": "",
+      "imagenes": [
+        "assets/productos/p36-ffob7y.jpg",
+        "assets/productos/p36-vzmw2v.jpg",
+        "assets/productos/p36-eqvk0y.jpg"
+      ],
+      "visible": true,
+      "agotado": false,
+      "destacado": false
+    },
+    {
+      "id": 37,
+      "slug": "zapatillas-art-470-negro",
+      "nombre": "Zapatillas Art. 470 Negro",
+      "categoria": "gowell-zsi",
+      "precio": 35000,
+      "talles": [
+        35,
+        36,
+        37,
+        38,
+        39,
+        40
+      ],
+      "color": "#ed0b6f",
+      "colorNombre": "Negro",
+      "led": false,
+      "descripcion": "",
+      "imagenes": [
+        "assets/productos/p37-r1dxwh.jpg",
+        "assets/productos/p37-echvu9.jpg"
+      ],
+      "visible": true,
+      "agotado": false,
+      "destacado": false
+    },
+    {
+      "id": 38,
+      "slug": "zapatillas-art-470-gris",
+      "nombre": "Zapatillas Art. 470 Gris",
+      "categoria": "gowell-zsi",
+      "precio": 35000,
+      "talles": [
+        35,
+        36,
+        37,
+        38,
+        39,
+        40
+      ],
+      "color": "#ed0b6f",
+      "colorNombre": "Gris",
+      "led": false,
+      "descripcion": "",
+      "imagenes": [
+        "assets/productos/p38-o2wdmf.jpg",
+        "assets/productos/p38-clviar.jpg"
+      ],
+      "visible": true,
+      "agotado": false,
+      "destacado": false
+    },
+    {
+      "id": 39,
+      "slug": "zapatillas-art-2004",
+      "nombre": "Zapatillas Art. 2004",
+      "categoria": "gowell-zsi",
+      "precio": 35000,
+      "talles": [
+        35,
+        36,
+        37,
+        38,
+        39,
+        40
+      ],
+      "color": "#ed0b6f",
+      "colorNombre": "Negro",
+      "led": false,
+      "descripcion": "",
+      "imagenes": [
+        "assets/productos/p39-n99tg1.jpg",
+        "assets/productos/p39-qnjuuq.jpg",
+        "assets/productos/p39-cyh4oa.jpg",
+        "assets/productos/p39-iysxda.jpg"
+      ],
+      "visible": true,
+      "agotado": false,
+      "destacado": false
+    },
+    {
+      "id": 40,
+      "slug": "borcego-mariposas-con-led",
+      "nombre": "Borcego Charol Mariposas con LED",
+      "categoria": "urbanas",
+      "precio": 65000,
+      "talles": [
+        23,
+        24,
+        25,
+        26,
+        27,
+        28
+      ],
+      "color": "#ed0b6f",
+      "colorNombre": "Negro",
+      "led": false,
+      "descripcion": "",
+      "imagenes": [
+        "assets/productos/p40-cfzu19.jpg",
+        "assets/productos/p40-p8s1un.jpg",
+        "assets/productos/p40-qkq3tk.jpg",
+        "assets/productos/p40-4e379g.jpg"
+      ],
+      "visible": true,
+      "agotado": false,
+      "destacado": false
+    },
+    {
+      "id": 41,
+      "slug": "borcego-charol-glitter-con-led",
+      "nombre": "Borcego Charol Glitter con LED",
+      "categoria": "urbanas",
+      "precio": 65000,
+      "talles": [
+        23,
+        24,
+        25,
+        26,
+        27,
+        28
+      ],
+      "color": "#ed0b6f",
+      "colorNombre": "Negro y Rosa",
+      "led": false,
+      "descripcion": "",
+      "imagenes": [
+        "assets/productos/p41-ktgztp.jpg",
+        "assets/productos/p41-wiatzr.jpg",
+        "assets/productos/p41-oiv5o0.jpg",
+        "assets/productos/p41-dq8kxp.jpg",
+        "assets/productos/p41-sdyb98.jpg"
+      ],
+      "visible": true,
+      "agotado": false,
+      "destacado": false
+    },
+    {
+      "id": 42,
+      "slug": "borcego-glitter-con-led",
+      "nombre": "Borcego Glitter con LED",
+      "categoria": "urbanas",
+      "precio": 65000,
+      "talles": [
+        23,
+        24,
+        25,
+        26,
+        27,
+        28
+      ],
+      "color": "#ed0b6f",
+      "colorNombre": "Rosa",
+      "led": false,
+      "descripcion": "",
+      "imagenes": [
+        "assets/productos/p42-xzzk5z.jpg",
+        "assets/productos/p42-wmpc46.jpg",
+        "assets/productos/p42-010pns.jpg"
+      ],
+      "visible": true,
+      "agotado": false,
+      "destacado": false
+    },
+    {
+      "id": 43,
+      "slug": "zapatillas-estrellas-velcro-con-led",
+      "nombre": "Zapatillas Estrellas velcro con LED",
+      "categoria": "urbanas",
+      "precio": 65000,
+      "talles": [
+        23,
+        24,
+        25,
+        26,
+        27,
+        28
+      ],
+      "color": "#ed0b6f",
+      "colorNombre": "Blanco",
+      "led": false,
+      "descripcion": "",
+      "imagenes": [
+        "assets/productos/p43-hwdgpp.jpg",
+        "assets/productos/p43-tv8v72.jpg",
+        "assets/productos/p43-q7jd5e.jpg"
+      ],
+      "visible": true,
+      "agotado": false,
+      "destacado": false
+    },
+    {
+      "id": 44,
+      "slug": "zapatillas-elastizado-con-led",
+      "nombre": "Zapatillas elastizado con LED",
+      "categoria": "urbanas",
+      "precio": 62900,
+      "talles": [
+        23,
+        24,
+        25,
+        26,
+        27,
+        28
+      ],
+      "color": "#ed0b6f",
+      "colorNombre": "Multicolor",
+      "led": false,
+      "descripcion": "",
+      "imagenes": [
+        "assets/productos/p44-84b2li.jpg",
+        "assets/productos/p44-5ie9of.jpg",
+        "assets/productos/p44-eql619.jpg",
+        "assets/productos/p44-rlianx.jpg"
+      ],
+      "visible": true,
+      "agotado": false,
+      "destacado": false
+    },
+    {
+      "id": 45,
+      "slug": "zapatillas-elastizado-con-led-45",
+      "nombre": "Zapatillas elastizado con LED",
+      "categoria": "urbanas",
+      "precio": 62900,
+      "talles": [
+        23,
+        24,
+        25,
+        26,
+        27,
+        28
+      ],
+      "color": "#ed0b6f",
+      "colorNombre": "Fuxia",
+      "led": false,
+      "descripcion": "",
+      "imagenes": [
+        "assets/productos/p45-6hb7mw.jpg",
+        "assets/productos/p45-93959y.jpg",
+        "assets/productos/p45-8l1da5.jpg"
+      ],
+      "visible": true,
+      "agotado": false,
+      "destacado": false
+    },
+    {
+      "id": 46,
+      "slug": "botita-con-lentejuelas",
+      "nombre": "Botita con lentejuelas",
+      "categoria": "urbanas",
+      "precio": 68000,
+      "talles": [
+        23,
+        24,
+        25,
+        26,
+        27,
+        28
+      ],
+      "color": "#ed0b6f",
+      "colorNombre": "Blanco",
+      "led": false,
+      "descripcion": "",
+      "imagenes": [
+        "assets/productos/p46-gpz1ol.jpg",
+        "assets/productos/p46-2ig8fi.jpg",
+        "assets/productos/p46-mo9y4c.jpg"
+      ],
+      "visible": true,
+      "agotado": false,
+      "destacado": false
+    },
+    {
+      "id": 47,
+      "slug": "zapatillas-glitter-y-cuero",
+      "nombre": "Zapatillas glitter y cuero",
+      "categoria": "urbanas",
+      "precio": 63999,
+      "talles": [
+        29,
+        30,
+        31,
+        32,
+        33,
+        34
+      ],
+      "color": "#ed0b6f",
+      "colorNombre": "Negro",
+      "led": false,
+      "descripcion": "",
+      "imagenes": [
+        "assets/productos/p47-5th0tr.jpg",
+        "assets/productos/p47-lzcmoh.jpg",
+        "assets/productos/p47-rcfaqs.jpg"
       ],
       "visible": true,
       "agotado": false,
