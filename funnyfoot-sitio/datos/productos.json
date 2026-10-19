@@ -4,7 +4,7 @@
     "nombre": "Funny Foot Calzados",
     "sitioUrl": "https://funnyfoots.netlify.app",
     "whatsapp": "5491126936890",
-    "telefonoVisible": "11 5555-0199",
+    "telefonoVisible": "11 2693-6890",
     "direccion1": "Av. Rivadavia 6521",
     "direccion2": "Caballito, Ciudad de Buenos Aires",
     "horarios": "Lunes a viernes 10 a 19h · Sábados 10 a 14h",
@@ -13,7 +13,7 @@
   "tienda": {
     "envioGratisDesde": 50000,
     "costoEnvio": 4500,
-    "descuentoTransferencia": 5,
+    "descuentoTransferencia": 0,
     "cuotasSinInteres": 3,
     "diasCambio": 30,
     "plazoEnvio": "El tiempo estimado de entrega es de 2 a 5 días hábiles en CABA y GBA, y de 4 a 8 días hábiles en el resto del país.",
@@ -1026,6 +1026,227 @@
         "assets/productos/p47-5th0tr.jpg",
         "assets/productos/p47-lzcmoh.jpg",
         "assets/productos/p47-rcfaqs.jpg"
+      ],
+      "visible": true,
+      "agotado": false,
+      "destacado": false
+    },
+    {
+      "id": 48,
+      "slug": "minnie-footy-disney-luces-al-pisar-velcro-y-elastico-48",
+      "nombre": "Minnie FOOTY Disney luces al pisar velcro y elástico",
+      "categoria": "led",
+      "precio": 58000,
+      "talles": [
+        22,
+        23,
+        24,
+        25,
+        26
+      ],
+      "color": "#ed0b6f",
+      "colorNombre": "rosa",
+      "led": true,
+      "descripcion": "",
+      "imagenes": [
+        "assets/productos/p48-5ygiqh.jpg",
+        "assets/productos/p48-xlq108.jpg",
+        "assets/productos/p48-qavcw3.jpg"
+      ],
+      "visible": true,
+      "agotado": false,
+      "destacado": false
+    },
+    {
+      "id": 49,
+      "slug": "mickey-mouse-footy-luces-al-pisar",
+      "nombre": "Mickey Mouse FOOTY luces al pisar",
+      "categoria": "led",
+      "precio": 58000,
+      "talles": [
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28
+      ],
+      "color": "#ed0b6f",
+      "colorNombre": "Azul",
+      "led": true,
+      "descripcion": "",
+      "imagenes": [
+        "assets/productos/p49-o3q82j.jpg",
+        "assets/productos/p49-sxetzv.jpg",
+        "assets/productos/p49-6zpxps.jpg"
+      ],
+      "visible": true,
+      "agotado": false,
+      "destacado": false
+    },
+    {
+      "id": 50,
+      "slug": "cars-footy-disney-luces-al-pisar-doble-velcro",
+      "nombre": "Cars FOOTY Disney luces al pisar doble velcro",
+      "categoria": "led",
+      "precio": 66900,
+      "talles": [
+        23,
+        24,
+        25,
+        26,
+        27,
+        28
+      ],
+      "color": "#ed0b6f",
+      "colorNombre": "Gris",
+      "led": true,
+      "descripcion": "",
+      "imagenes": [
+        "assets/productos/p50-0gjce9.jpg",
+        "assets/productos/p50-bp1qhd.jpg",
+        "assets/productos/p50-qgc0rq.jpg"
+      ],
+      "visible": true,
+      "agotado": false,
+      "destacado": false
+    },
+    {
+      "id": 51,
+      "slug": "cars-footy-doble-vlecro-con-luces-al-pisar",
+      "nombre": "Cars FOOTY doble vlecro con luces al pisar",
+      "categoria": "led",
+      "precio": 66900,
+      "talles": [
+        23,
+        24,
+        25,
+        26,
+        27,
+        28
+      ],
+      "color": "#ed0b6f",
+      "colorNombre": "Azul",
+      "led": true,
+      "descripcion": "",
+      "imagenes": [
+        "assets/productos/p51-0pcpo7.jpg",
+        "assets/productos/p51-jgygke.jpg",
+        "assets/productos/p51-5tp3fe.jpg"
+      ],
+      "visible": true,
+      "agotado": false,
+      "destacado": false
+    },
+    {
+      "id": 52,
+      "slug": "cars-footy-dibujo-auto-elastizada-con-velcro-y-luces-al-pisar",
+      "nombre": "Cars FOOTY dibujo auto elastizada con velcro y luces al pisar",
+      "categoria": "led",
+      "precio": 82000,
+      "talles": [
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30
+      ],
+      "color": "#ed0b6f",
+      "colorNombre": "Negro",
+      "led": true,
+      "descripcion": "",
+      "imagenes": [
+        "assets/productos/p52-jfzk6y.jpg",
+        "assets/productos/p52-xszv7k.jpg",
+        "assets/productos/p52-kf5jfi.jpg"
+      ],
+      "visible": true,
+      "agotado": false,
+      "destacado": false
+    },
+    {
+      "id": 53,
+      "slug": "spiderman-footy-luces-al-pisar",
+      "nombre": "Spiderman FOOTY luces al pisar",
+      "categoria": "led",
+      "precio": 66900,
+      "talles": [
+        25,
+        26,
+        27,
+        28,
+        29,
+        30
+      ],
+      "color": "#ed0b6f",
+      "colorNombre": "Negro",
+      "led": true,
+      "descripcion": "",
+      "imagenes": [
+        "assets/productos/p53-aj8y4b.jpg",
+        "assets/productos/p53-qxii8e.jpg",
+        "assets/productos/p53-dmivwt.jpg"
+      ],
+      "visible": true,
+      "agotado": false,
+      "destacado": false
+    },
+    {
+      "id": 54,
+      "slug": "footy-luces-corazon",
+      "nombre": "FOOTY luces corazón",
+      "categoria": "led",
+      "precio": 84000,
+      "talles": [
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34
+      ],
+      "color": "#ed0b6f",
+      "colorNombre": "Fucsia",
+      "led": true,
+      "descripcion": "",
+      "imagenes": [
+        "assets/productos/p54-u13s81.jpg",
+        "assets/productos/p54-mcrc34.jpg",
+        "assets/productos/p54-4jtqio.jpg"
+      ],
+      "visible": true,
+      "agotado": false,
+      "destacado": false
+    },
+    {
+      "id": 55,
+      "slug": "footy-luces-modelo-wow-estrellas-tornasol",
+      "nombre": "FOOTY luces modelo wow estrellas tornasol",
+      "categoria": "led",
+      "precio": 84000,
+      "talles": [
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34
+      ],
+      "color": "#ed0b6f",
+      "colorNombre": "lila",
+      "led": true,
+      "descripcion": "",
+      "imagenes": [
+        "assets/productos/p55-scawxl.jpg",
+        "assets/productos/p55-8rmycq.jpg"
       ],
       "visible": true,
       "agotado": false,
