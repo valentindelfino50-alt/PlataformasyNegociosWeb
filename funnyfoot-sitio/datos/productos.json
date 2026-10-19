@@ -28,10 +28,10 @@
   "categorias": [
     {
       "id": "led",
-      "slug": "zapatillas-con-luz-led",
-      "nombre": "Con luz LED",
-      "h1": "Zapatillas con luz LED para niñas y niños",
-      "intro": "Zapatillas con luces que se encienden al pisar, con personajes y colores para elegir. Elegí el talle y armá tu pedido.",
+      "slug": "footy",
+      "nombre": "Footy",
+      "h1": "Zapatillas con tus personajes de Disney favoritos para niñas y niños",
+      "intro": "Zapatillas con luces que se encienden al pisar y/o con personajes y colores para elegir. Elegí el talle y armá tu pedido.",
       "resumen": "Personajes favoritos, se iluminan al pisar",
       "icono": "spark",
       "titulo": "Zapatillas con luz LED para niños | Funny Foot",
@@ -77,7 +77,7 @@
       "slug": "frozen-footy-corazon-lila-con-luz-al-pisar",
       "nombre": "Frozen FOOTY Corazón Lila con luz al pisar",
       "categoria": "led",
-      "precio": 72900,
+      "precio": 84000,
       "talles": [
         23,
         24,
@@ -86,11 +86,15 @@
         27,
         28
       ],
-      "color": "#B57BDB",
+      "color": "#b57bdb",
       "colorNombre": "Lila",
       "led": true,
       "descripcion": "",
-      "imagenes": [],
+      "imagenes": [
+        "assets/productos/p1-vc4mgb.jpg",
+        "assets/productos/p1-q9utyo.jpg",
+        "assets/productos/p1-74lhjr.jpg"
+      ],
       "visible": true,
       "agotado": false,
       "destacado": true
@@ -98,9 +102,9 @@
     {
       "id": 2,
       "slug": "frozen-footy-together-celeste-con-luz-al-pisar",
-      "nombre": "Frozen FOOTY Together Celeste con luz al pisar",
+      "nombre": "Frozen FOOTY Celeste con luz al pisar",
       "categoria": "led",
-      "precio": 72900,
+      "precio": 82000,
       "talles": [
         23,
         24,
@@ -109,11 +113,15 @@
         27,
         28
       ],
-      "color": "#5FA9DE",
+      "color": "#5fa9de",
       "colorNombre": "Celeste",
       "led": true,
       "descripcion": "",
-      "imagenes": [],
+      "imagenes": [
+        "assets/productos/p2-wcjce3.jpg",
+        "assets/productos/p2-dri2yw.jpg",
+        "assets/productos/p2-f6tb4j.jpg"
+      ],
       "visible": true,
       "agotado": false,
       "destacado": false
@@ -123,123 +131,197 @@
       "slug": "stitch-footy-good-vibes-fucsia-con-luz-al-pisar",
       "nombre": "Stitch FOOTY Good Vibes Fucsia con luz al pisar",
       "categoria": "led",
-      "precio": 72900,
+      "precio": 82000,
       "talles": [
+        25,
         26,
         27,
         28,
         29,
-        30,
-        31,
-        32
+        30
       ],
-      "color": "#ED0B6F",
+      "color": "#ed0b6f",
       "colorNombre": "Fucsia",
       "led": true,
       "descripcion": "",
-      "imagenes": [],
+      "imagenes": [
+        "assets/productos/p3-in424m.jpg",
+        "assets/productos/p3-tiihui.jpg",
+        "assets/productos/p3-xnsqiz.jpg"
+      ],
       "visible": true,
       "agotado": false,
       "destacado": true
     },
     {
-      "id": 4,
-      "slug": "minnie-footy-star-lila-con-luz-al-pisar",
-      "nombre": "Minnie FOOTY Star Lila con luz al pisar",
+      "id": 17,
+      "slug": "frozen-footy-luces-2-velcros",
+      "nombre": "Frozen FOOTY luces 2 velcros",
       "categoria": "led",
-      "precio": 72900,
+      "precio": 82000,
       "talles": [
-        22,
         23,
         24,
         25,
-        26
+        26,
+        27,
+        28
       ],
-      "color": "#9C6BD9",
+      "color": "#ed0b6f",
       "colorNombre": "Lila",
       "led": true,
       "descripcion": "",
-      "imagenes": [],
+      "imagenes": [
+        "assets/productos/p17-or35ct.jpg",
+        "assets/productos/p17-9bv8s1.jpg",
+        "assets/productos/p17-qfkj6f.jpg"
+      ],
       "visible": true,
       "agotado": false,
       "destacado": false
     },
     {
-      "id": 5,
-      "slug": "zapatilla-footy-cars-race-rojo-con-luz-al-pisar",
-      "nombre": "Zapatilla FOOTY Cars Race Rojo con luz al pisar",
+      "id": 18,
+      "slug": "frozen-footy-disney-lila-plata",
+      "nombre": "Frozen FOOTY Disney lila plata",
       "categoria": "led",
-      "precio": 72900,
+      "precio": 82000,
       "talles": [
+        23,
+        24,
+        25,
+        26,
+        27,
+        28
+      ],
+      "color": "#ed0b6f",
+      "colorNombre": "Lila",
+      "led": true,
+      "descripcion": "",
+      "imagenes": [
+        "assets/productos/p18-zzl83w.jpg",
+        "assets/productos/p18-bayvi2.jpg",
+        "assets/productos/p18-lzs4qz.jpg"
+      ],
+      "visible": true,
+      "agotado": false,
+      "destacado": false
+    },
+    {
+      "id": 19,
+      "slug": "stitch-footy-lila-con-luces-al-pisar",
+      "nombre": "Stitch FOOTY lila con luces al pisar",
+      "categoria": "led",
+      "precio": 82000,
+      "talles": [
+        25,
         26,
         27,
         28,
         29,
-        30,
-        31,
-        32
+        30
       ],
-      "color": "#E14336",
+      "color": "#ed0b6f",
+      "colorNombre": "lila",
+      "led": true,
+      "descripcion": "",
+      "imagenes": [
+        "assets/productos/p19-u858ls.jpg",
+        "assets/productos/p19-cd0ocs.jpg",
+        "assets/productos/p19-mek8op.jpg"
+      ],
+      "visible": true,
+      "agotado": false,
+      "destacado": false
+    },
+    {
+      "id": 20,
+      "slug": "minnie-footy-disney",
+      "nombre": "Minnie FOOTY Disney",
+      "categoria": "led",
+      "precio": 82000,
+      "talles": [
+        23,
+        24,
+        25,
+        26,
+        27,
+        28
+      ],
+      "color": "#ed0b6f",
+      "colorNombre": "rosa",
+      "led": false,
+      "descripcion": "",
+      "imagenes": [
+        "assets/productos/p20-t4rx5q.jpg",
+        "assets/productos/p20-c7zf5i.jpg",
+        "assets/productos/p20-k76uoc.jpg"
+      ],
+      "visible": true,
+      "agotado": false,
+      "destacado": false
+    },
+    {
+      "id": 21,
+      "slug": "minnie-footy-disney-luces-al-pisar-velcro-y-elastico",
+      "nombre": "Minnie FOOTY Disney luces al pisar velcro y elástico",
+      "categoria": "led",
+      "precio": 82000,
+      "talles": [
+        23,
+        24,
+        25,
+        26,
+        27,
+        28
+      ],
+      "color": "#ed0b6f",
+      "colorNombre": "rosa",
+      "led": true,
+      "descripcion": "",
+      "imagenes": [
+        "assets/productos/p21-3y3hi9.jpg",
+        "assets/productos/p21-1wttn4.jpg",
+        "assets/productos/p21-d8upom.jpg"
+      ],
+      "visible": true,
+      "agotado": false,
+      "destacado": false
+    },
+    {
+      "id": 22,
+      "slug": "cars-footy-disney-linea-pro-luces-al-pisar",
+      "nombre": "Cars FOOTY Disney linea pro luces al pisar",
+      "categoria": "led",
+      "precio": 80700,
+      "talles": [
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30
+      ],
+      "color": "#ed0b6f",
       "colorNombre": "Rojo",
       "led": true,
       "descripcion": "",
-      "imagenes": [],
-      "visible": true,
-      "agotado": false,
-      "destacado": true
-    },
-    {
-      "id": 6,
-      "slug": "zapatilla-pop-footy-mickey-azul-smiles-con-luz-al-pisar",
-      "nombre": "Zapatilla POP FOOTY Mickey Azul Smiles con luz al pisar",
-      "categoria": "led",
-      "precio": 48000,
-      "talles": [
-        22,
-        23,
-        24,
-        25,
-        26
+      "imagenes": [
+        "assets/productos/p22-c7fzg6.jpg",
+        "assets/productos/p22-031qiw.jpg"
       ],
-      "color": "#3E7FC1",
-      "colorNombre": "Azul",
-      "led": true,
-      "descripcion": "",
-      "imagenes": [],
       "visible": true,
       "agotado": false,
       "destacado": false
     },
     {
-      "id": 7,
-      "slug": "footy-multi-star-con-luz-al-pisar",
-      "nombre": "FOOTY Multi Star con luz al pisar",
+      "id": 23,
+      "slug": "cars-footy-disney-luces",
+      "nombre": "Cars FOOTY Disney luces",
       "categoria": "led",
-      "precio": 74000,
-      "talles": [
-        28,
-        29,
-        30,
-        31,
-        32,
-        33,
-        34
-      ],
-      "color": "#E0A421",
-      "colorNombre": "Dorado",
-      "led": true,
-      "descripcion": "",
-      "imagenes": [],
-      "visible": true,
-      "agotado": false,
-      "destacado": false
-    },
-    {
-      "id": 8,
-      "slug": "forki-04-borcegos-nena-glitter-negro-charol-ferli",
-      "nombre": "FORKI 04 Borcegos Nena Glitter Negro Charol FERLI",
-      "categoria": "botas",
-      "precio": 46000,
+      "precio": 58000,
       "talles": [
         23,
         24,
@@ -248,90 +330,25 @@
         27,
         28
       ],
-      "color": "#2E2A32",
+      "color": "#ed0b6f",
       "colorNombre": "Negro",
-      "led": false,
-      "descripcion": "",
-      "imagenes": [],
-      "visible": true,
-      "agotado": false,
-      "destacado": false
-    },
-    {
-      "id": 9,
-      "slug": "gobby-07-botitas-nena-con-luces-led-ferli",
-      "nombre": "GOBBY 07 Botitas Nena con Luces LED FERLI",
-      "categoria": "botas",
-      "precio": 46000,
-      "talles": [
-        23,
-        24,
-        25,
-        26,
-        27,
-        28
-      ],
-      "color": "#A468C4",
-      "colorNombre": "Lila",
       "led": true,
       "descripcion": "",
-      "imagenes": [],
-      "visible": true,
-      "agotado": false,
-      "destacado": true
-    },
-    {
-      "id": 10,
-      "slug": "botita-ferli-benson",
-      "nombre": "Botita FERLI Benson",
-      "categoria": "botas",
-      "precio": 46000,
-      "talles": [
-        23,
-        24,
-        25,
-        26,
-        27,
-        28
+      "imagenes": [
+        "assets/productos/p23-ak3ex4.jpg",
+        "assets/productos/p23-8uhvjb.jpg",
+        "assets/productos/p23-cwjrwq.jpg"
       ],
-      "color": "#8C5A38",
-      "colorNombre": "Marrón",
-      "led": false,
-      "descripcion": "",
-      "imagenes": [],
       "visible": true,
       "agotado": false,
       "destacado": false
     },
     {
-      "id": 11,
-      "slug": "pantubotas-nenas-ferli-piel-abrigada",
-      "nombre": "Pantubotas Nenas FERLI Piel abrigada",
-      "categoria": "botas",
-      "precio": 74000,
-      "talles": [
-        29,
-        30,
-        31,
-        32,
-        33,
-        34
-      ],
-      "color": "#6E4A2E",
-      "colorNombre": "Camel",
-      "led": false,
-      "descripcion": "",
-      "imagenes": [],
-      "visible": true,
-      "agotado": false,
-      "destacado": false
-    },
-    {
-      "id": 12,
-      "slug": "lena-03-zapatillas-con-luces-led-ninas-ferli",
-      "nombre": "LENA 03 Zapatillas con luces LED niñas FERLI",
+      "id": 24,
+      "slug": "cars-footy-luces-al-pisar",
+      "nombre": "Cars FOOTY luces al pisar",
       "categoria": "led",
-      "precio": 48000,
+      "precio": 58000,
       "talles": [
         23,
         24,
@@ -340,108 +357,15 @@
         27,
         28
       ],
-      "color": "#E0559A",
-      "colorNombre": "Rosa",
+      "color": "#ed0b6f",
+      "colorNombre": "azul",
       "led": true,
       "descripcion": "",
-      "imagenes": [],
-      "visible": true,
-      "agotado": false,
-      "destacado": true
-    },
-    {
-      "id": 13,
-      "slug": "marilu-01-zapatillas-nena-cordon-elastizado-ferli",
-      "nombre": "MARILU 01 Zapatillas Nena Cordón Elastizado FERLI",
-      "categoria": "urbanas",
-      "precio": 59000,
-      "talles": [
-        29,
-        30,
-        31,
-        32,
-        33,
-        34,
-        35,
-        36
+      "imagenes": [
+        "assets/productos/p24-nel9gm.jpg",
+        "assets/productos/p24-lesl7p.jpg",
+        "assets/productos/p24-axrub3.jpg"
       ],
-      "color": "#E39AB6",
-      "colorNombre": "Rosa pastel",
-      "led": false,
-      "descripcion": "",
-      "imagenes": [],
-      "visible": true,
-      "agotado": false,
-      "destacado": false
-    },
-    {
-      "id": 14,
-      "slug": "zapatillas-ferli-cierre-de-abrojo-y-elastico",
-      "nombre": "Zapatillas FERLI cierre de abrojo y elástico",
-      "categoria": "urbanas",
-      "precio": 59000,
-      "talles": [
-        29,
-        30,
-        31,
-        32,
-        33,
-        34,
-        35,
-        36
-      ],
-      "color": "#9AA0A8",
-      "colorNombre": "Gris",
-      "led": false,
-      "descripcion": "",
-      "imagenes": [],
-      "visible": true,
-      "agotado": false,
-      "destacado": false
-    },
-    {
-      "id": 15,
-      "slug": "zapatillas-jaguar-oficial-deportiva-art-4020",
-      "nombre": "Zapatillas JAGUAR Oficial Deportiva art. 4020",
-      "categoria": "deportivas",
-      "precio": 45000,
-      "talles": [
-        30,
-        31,
-        32,
-        33,
-        34,
-        35
-      ],
-      "color": "#3E4E6B",
-      "colorNombre": "Gris azulado",
-      "led": false,
-      "descripcion": "",
-      "imagenes": [],
-      "visible": true,
-      "agotado": false,
-      "destacado": true
-    },
-    {
-      "id": 16,
-      "slug": "zapatillas-jaguar-urbana-kids-art-4031",
-      "nombre": "Zapatillas JAGUAR Urbana Kids art. 4031",
-      "categoria": "deportivas",
-      "precio": 45000,
-      "talles": [
-        27,
-        28,
-        29,
-        30,
-        31,
-        32,
-        33
-      ],
-      "color": "#233047",
-      "colorNombre": "Azul marino",
-      "led": false,
-      "descripcion": "",
-      "imagenes": [],
       "visible": true,
       "agotado": false,
       "destacado": false
