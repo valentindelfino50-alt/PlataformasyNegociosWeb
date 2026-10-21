@@ -6,7 +6,7 @@ La carpeta **`funnyfoot-sitio/`** es el sitio completo. El resto del repositorio
 
 | Para qué | Qué hay |
 |---|---|
-| Tienda | Inicio, catálogo, páginas por categoría, ficha de cada producto con fotos, Nosotros, Contacto y políticas |
+| Tienda | Inicio, catálogo, páginas por categoría, ficha de cada producto con fotos, **Preguntas frecuentes** (se arman solas con tus datos de envíos, pagos y cambios), Nosotros, Contacto y políticas |
 | Compra | Carrito, **Finalizar compra** (datos, envío o retiro, medio de pago), pedido registrado y página de confirmación con número de pedido |
 | Administración | **Panel en `/admin/`**: productos (nombre, precio, talles, categoría, fotos, estado), categorías, datos del negocio, envíos y medios de pago |
 | Google | `sitemap.xml`, `robots.txt`, datos estructurados de producto y local, medición de Analytics y Ads lista para activar |

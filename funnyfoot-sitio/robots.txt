@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /admin/
 
-Sitemap: https://SU-SITIO.netlify.app/sitemap.xml
+Sitemap: https://funnyfoots.netlify.app/sitemap.xml

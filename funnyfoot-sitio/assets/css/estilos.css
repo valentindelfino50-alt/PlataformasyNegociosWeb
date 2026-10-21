@@ -758,3 +758,32 @@
   .pdp-main svg{overflow:visible;}
   .hero-badge{width:auto;max-width:none;padding:10px 16px;flex-direction:row;gap:0;}
   .hero-card{width:52%;}
+
+
+/* ===== Preguntas frecuentes + categorías con foto ===== */
+.cat-art.photo{padding:6px 0;}
+.cat-photo{display:block;width:100%;max-width:200px;aspect-ratio:1/1;border-radius:18px;overflow:hidden;background:#fff;box-shadow:0 8px 20px rgba(27,18,38,.22);transition:transform .25s ease;}
+.cat-photo img{width:100%;height:100%;object-fit:cover;display:block;}
+.cat-tile:hover .cat-photo{transform:scale(1.05) rotate(-2deg);}
+.faq-list{display:grid;gap:10px;max-width:860px;}
+.faq-item{background:#fff;border:1px solid rgba(27,18,38,.1);border-radius:16px;overflow:hidden;}
+.faq-item summary{cursor:pointer;list-style:none;padding:16px 52px 16px 18px;font-weight:700;color:#1B1226;position:relative;font-size:1rem;}
+.faq-item summary::-webkit-details-marker{display:none;}
+.faq-item summary::after{content:"+";position:absolute;right:16px;top:50%;transform:translateY(-50%);width:28px;height:28px;border-radius:50%;background:#FFE3EF;color:#ED0B6F;display:flex;align-items:center;justify-content:center;font-size:1.3rem;line-height:1;font-weight:700;}
+.faq-item[open] summary::after{content:"\2212";background:#ED0B6F;color:#fff;}
+.faq-item[open]{border-color:#ED0B6F;}
+.faq-item summary:focus-visible{outline:3px solid #FFC933;outline-offset:-3px;}
+.faq-a{padding:0 18px 16px;color:#4a4357;line-height:1.6;}
+.faq-a p{margin:0;}
+.faq-wrap{padding-block:8px 48px;}
+.faq-cta{max-width:860px;margin-top:28px;display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:#FFE3EF;border-radius:20px;padding:22px 24px;}
+.faq-cta h2{margin:0 0 4px;font-size:1.25rem;}
+.faq-cta p{margin:0;color:#4a4357;}
+@media (prefers-color-scheme: dark){
+  .faq-item{background:#241a31;border-color:rgba(255,255,255,.12);}
+  .faq-item summary{color:#fff;}
+  .faq-a{color:#d8d0e3;}
+  .faq-cta{background:#2d1f3d;}
+  .faq-cta p{color:#d8d0e3;}
+}
+.cat-art.photo{padding:6px 0 12px;}

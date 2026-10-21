@@ -258,6 +258,7 @@ def footer_tpl():
         <h4>AYUDA</h4>
         <ul>
           <li><a href="/contacto/">Contacto</a></li>
+          <li><a href="/preguntas-frecuentes/">Preguntas frecuentes</a></li>
           <li><a href="/envios-y-pagos/">Envíos y pagos</a></li>
           <li><a href="/cambios-y-devoluciones/">Cambios y devoluciones</a></li>
           <li><a href="/privacidad-y-terminos/">Privacidad y términos</a></li>
@@ -465,7 +466,13 @@ MAP_SVG = '''<svg viewBox="0 0 420 320" preserveAspectRatio="xMidYMid slice" rol
 
 
 def pg_home():
-    feat = [p for p in PRODUCTS if p.get('destacado')][:8] or PRODUCTS[:6]
+    feat = [p for p in PRODUCTS if p.get('destacado')][:8]
+    for p in PRODUCTS:
+        if len(feat) >= 4:
+            break
+        if p not in feat:
+            feat.append(p)
+    feat = feat[:len(feat) - len(feat) % 4] if len(feat) > 4 else feat
     hero_cards = ''
     for i, p in enumerate(feat[:2]):
         if p['imagenes']:
@@ -476,12 +483,20 @@ def pg_home():
         hero_cards += '<a class="hero-card hc%d" href="%s">%s<b>%s</b><span class="hc-price">%s</span></a>' % (i + 1, p_url(p), media, esc(p['nombre']), money(p['precio']))
     cats = ''
     for i, c in enumerate(CATS):
-        n = len(cat_products(c['id']))
+        cps = cat_products(c['id'])
+        n = len(cps)
+        con_foto = [p for p in cps if p['imagenes']]
+        con_foto.sort(key=lambda p: not p.get('destacado'))
+        if con_foto:
+            art = '<span class="cat-art photo"><span class="cat-photo"><img src="/%s" alt="" loading="lazy" decoding="async"></span></span>' % esc(con_foto[0]['imagenes'][0])
+        else:
+            art = '<span class="cat-art"><svg viewBox="0 0 120 80" aria-hidden="true"><use href="#%s"/></svg></span>' % cat_art(c)
+        resumen = '<p>%s</p>' % esc(c['resumen']) if c.get('resumen') else ''
         cats += '''<a class="cat-tile t%d" href="%s">
-      <span class="cat-art"><svg viewBox="0 0 120 80" aria-hidden="true"><use href="#%s"/></svg></span>
-      <h3>%s</h3><p>%s</p>
+      %s
+      <h3>%s</h3>%s
       <span class="cat-meta"><span>%d modelo%s</span><span class="cat-go">%s</span></span></a>''' % (
-            i % 4, c_url(c), cat_art(c), esc(c['nombre']), esc(c['resumen']), n, '' if n == 1 else 's', ic('arrow', 'ic'))
+            i % 4, c_url(c), art, esc(c['nombre']), resumen, n, '' if n == 1 else 's', ic('arrow', 'ic'))
     feat_html = '\n'.join(card(p) for p in feat)
     free = T.get('envioGratisDesde')
     trust = [
@@ -491,13 +506,14 @@ def pg_home():
         ('swap', 'Cambios sin vueltas', 'Hasta %d días para cambiar el talle' % T.get('diasCambio', 30)),
     ]
     trust_html = ''.join('<div class="trust-item"><span class="trust-ic">%s</span><div><b>%s</b><span>%s</span></div></div>' % (ic(i), esc(t), x) for i, t, x in trust)
+    faq_home = faq_html(faq_items()[:5])
     body = '''<section class="hero">
   <div class="hero-panel"></div>
   <div class="wrap hero-inner">
     <div class="hero-copy">
       <span class="kicker"><span class="dashline"><span></span><span></span><span></span></span>TIENDA FAMILIAR EN CABALLITO</span>
       <h1>Zapatillas que <span class="hl">iluminan</span> cada paso</h1>
-      <p>Calzado infantil con estilo, comodidad y mucha diversión: personajes con luz LED, botas FERLI y deportivas JAGUAR. Del local de barrio a tu casa, en todo el país.</p>
+      <p>Calzado infantil con estilo, comodidad y mucha diversión: modelos con luz LED, botas, zapatillas urbanas y deportivas. Del local de barrio a tu casa, en todo el país.</p>
       <div class="hero-cta">
         <a href="/productos/" class="btn btn-pink">Ver catálogo</a>
         <a href="/nosotros/" class="btn btn-outline-light">Visitanos en Caballito</a>
@@ -548,6 +564,14 @@ def pg_home():
 </section>
 
 <section class="wrap">
+  <div class="section-head">
+    <div><span class="eyebrow">Dudas comunes</span><h2>Preguntas frecuentes</h2></div>
+    <a href="/preguntas-frecuentes/" class="btn btn-outline btn-sm">Ver todas</a>
+  </div>
+  <div class="faq-list">%(faq)s</div>
+</section>
+
+<section class="wrap">
   <div class="section-head"><div><span class="eyebrow">Visitanos</span><h2>Nuestro local</h2></div></div>
   <div class="store-card">
     <div class="store-info">
@@ -574,20 +598,84 @@ def pg_home():
       <button type="submit" class="btn btn-primary">Suscribirme</button>
     </form>
   </div>
-</section>''' % dict(n=esc(NAME), hcards=hero_cards, trust=trust_html, cats=cats, feat=feat_html, i1=ic('shield'), i2=ic('heart'), i3=ic('users'), i4=ic('spark'),
+</section>''' % dict(n=esc(NAME), hcards=hero_cards, faq=faq_home, trust=trust_html, cats=cats, feat=feat_html, i1=ic('shield'), i2=ic('heart'), i3=ic('users'), i4=ic('spark'),
                      imap=ic('map'), iclock=ic('clock'), iphone=ic('phone'), d1=esc(N['direccion1']), d2=esc(N['direccion2']),
                      hor=esc(N['horarios']), tel=esc(N['telefonoVisible']), map=MAP_SVG,
                      maps='https://www.google.com/maps/search/?api=1&query=' + urllib.parse.quote('%s, %s' % (N['direccion1'], N['direccion2'])))
     return page('/', '%s | Zapatillas y calzado infantil en Caballito' % NAME.replace(' Calzados', ''),
-                'Zapatillas con luz LED, botas FERLI y deportivas JAGUAR para niñas y niños. Local en Caballito, pedidos online para todo el país.',
+                'Zapatillas con luz LED, botas, urbanas y deportivas para niñas y niños. Local en Caballito, pedidos online para todo el país.',
                 'inicio', body, ld=[local_business_ld()])
 
 
+def faq_items():
+    m = T.get('metodosPago', {})
+    free = T.get('envioGratisDesde')
+    costo = T.get('costoEnvio')
+    dias = T.get('diasCambio', 30)
+    pagos = [x.rstrip('.') for x in policy_pay_list()]
+    envio = T.get('plazoEnvio') or 'Te confirmamos el plazo de entrega al coordinar tu pedido.'
+    envio_cost = ''
+    if costo:
+        envio_cost = ' El envío cuesta %s' % money(costo)
+        envio_cost += (' y es gratis en compras desde %s.' % money(free)) if free else '.'
+    elif free:
+        envio_cost = ' El envío es gratis en compras desde %s.' % money(free)
+    return [
+        ('¿Cómo hago un pedido?',
+         'Elegí el modelo, seleccioná el talle y sumalo al carrito. Después completá tus datos en el carrito, elegí envío o retiro y el medio de pago, y confirmá. '
+         'Te llega un número de pedido y nos ponemos en contacto para confirmar la disponibilidad y coordinar el pago y la entrega.'),
+        ('¿Cómo sé qué talle elegir?',
+         'Medí el pie de tu hijo o hija apoyado en una hoja, de talón a dedo más largo, y sumá aproximadamente 1 cm de margen. Si te queda la duda, escribinos por WhatsApp con ese largo y te aconsejamos el talle justo. '
+         'Además, si no calza bien, podés cambiarlo (ver cambios).'),
+        ('¿Qué medios de pago aceptan?',
+         ('Aceptamos: ' + '; '.join(pagos) + '.') if pagos else 'Coordinamos el pago con vos al confirmar el pedido.'),
+        ('¿Hacen envíos a todo el país?',
+         'Sí, enviamos por correo a toda la Argentina. ' + envio + envio_cost),
+        ('¿Puedo retirar el pedido por el local?',
+         'Sí, sin cargo. Estamos en %s, %s. Horarios: %s. Te avisamos cuando el pedido esté listo para retirar.' % (N['direccion1'], N['direccion2'], N['horarios'])),
+        ('¿Puedo cambiar el talle o el modelo?',
+         'Sí. Tenés hasta %d días desde que recibís el producto para pedir un cambio de talle o modelo, siempre que esté sin uso y en su caja original. Escribinos por WhatsApp y lo coordinamos.' % dias),
+        ('¿Qué pasa si llega con una falla?',
+         'Si el producto llega con un defecto de fabricación, nos escribís con una foto y lo cambiamos sin costo o lo resolvemos de la mejor manera para vos.'),
+        ('¿Cómo funcionan las zapatillas con luz LED?',
+         'Los modelos con LED se iluminan con el movimiento al pisar, sin pilas que cambiar. En cada producto vas a ver la etiqueta “LED” para identificarlos.'),
+        ('¿Las fotos y los precios son los reales?',
+         'Las fotos corresponden a los modelos que tenemos. Los precios y la disponibilidad de talles pueden variar, por eso los confirmamos al recibir tu pedido, antes de que pagues nada.'),
+        ('¿Tienen calzado para el colegio o para uso diario?',
+         'Sí, tenemos modelos urbanos y deportivos pensados para el uso diario: aguantan el recreo, la plaza y el fin de semana. Consultanos y te recomendamos según la edad y el uso.'),
+    ]
+
+
+def faq_html(items):
+    return '\n'.join('<details class="faq-item"><summary><span>%s</span></summary><div class="faq-a"><p>%s</p></div></details>' % (esc(q), esc(a)) for q, a in items)
+
+
+def pg_faq():
+    items = faq_items()
+    ph = pagehead('Preguntas frecuentes', 'Respondemos las dudas más comunes sobre pedidos, talles, pagos, envíos y cambios.', [('Inicio', '/'), ('Preguntas frecuentes', None)])
+    body = ph + """
+<section class="wrap faq-wrap">
+  <div class="faq-list">
+%s
+  </div>
+  <div class="faq-cta">
+    <div><h2>¿Te quedó alguna duda?</h2><p>Escribinos y te respondemos a la brevedad.</p></div>
+    <a href="%s" target="_blank" rel="noopener" class="btn btn-pink" data-wa>Consultar por WhatsApp</a>
+  </div>
+</section>""" % (faq_html(items), wa_link())
+    ld = [{'@context': 'https://schema.org', '@type': 'FAQPage', 'mainEntity': [
+        {'@type': 'Question', 'name': q, 'acceptedAnswer': {'@type': 'Answer', 'text': a}} for q, a in items]},
+        breadcrumb_ld([('Inicio', '/'), ('Preguntas frecuentes', '/preguntas-frecuentes/')])]
+    return page('/preguntas-frecuentes/', 'Preguntas frecuentes | %s' % NAME.replace(' Calzados', ''),
+                'Respuestas a las dudas más comunes: cómo comprar, talles, medios de pago, envíos, retiro y cambios en Funny Foot.',
+                'inicio', body, ld=ld)
+
+
 def pg_productos():
-    body = pagehead('Todo nuestro calzado', 'Zapatillas con luz LED, botas y botitas FERLI, urbanas y deportivas JAGUAR. Elegí talle y sumalo al carrito.',
+    body = pagehead('Todo nuestro calzado', 'Zapatillas con luz LED, botas, urbanas y deportivas. Elegí talle y sumalo al carrito.',
                     [('Inicio', '/'), ('Productos', None)]) + '\n' + listing(None)
     return page('/productos/', 'Calzado infantil: zapatillas, botas y deportivas | %s' % NAME.replace(' Calzados', ''),
-                'Catálogo de calzado infantil: zapatillas con luz LED, botas y botitas FERLI, urbanas y deportivas JAGUAR. Comprá online.',
+                'Catálogo de calzado infantil: zapatillas con luz LED, botas, urbanas y deportivas. Comprá online.',
                 'productos', body, ld=[breadcrumb_ld([('Inicio', '/'), ('Productos', '/productos/')])])
 
 
@@ -1010,6 +1098,7 @@ def main():
     for p in PRODUCTS:
         write(p_url(p), pg_product(p))
     write('/nosotros/', pg_nosotros())
+    write('/preguntas-frecuentes/', pg_faq())
     write('/contacto/', pg_contacto())
     for slug, pol in policies().items():
         write('/%s/' % slug, pg_policy(slug, pol))
@@ -1024,7 +1113,7 @@ def main():
         fh.write(catalogo_js())
 
     urls = ['/', '/productos/'] + [c_url(c) for c in CATS] + [p_url(p) for p in PRODUCTS] + \
-           ['/nosotros/', '/contacto/', '/envios-y-pagos/', '/cambios-y-devoluciones/', '/privacidad-y-terminos/']
+           ['/nosotros/', '/preguntas-frecuentes/', '/contacto/', '/envios-y-pagos/', '/cambios-y-devoluciones/', '/privacidad-y-terminos/']
     prio = {'/': '1.0', '/productos/': '0.9'}
     sm = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
     for u in urls:
