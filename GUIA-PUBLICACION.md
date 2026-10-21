@@ -10,7 +10,7 @@ La carpeta **`funnyfoot-sitio/`** es el sitio completo. El resto del repositorio
 | Compra | Carrito, **Finalizar compra** (datos, envío o retiro, medio de pago), pedido registrado y página de confirmación con número de pedido |
 | Administración | **Panel en `/admin/`**: productos (nombre, precio, talles, categoría, fotos, estado), categorías, datos del negocio, envíos y medios de pago |
 | Google | `sitemap.xml`, `robots.txt`, datos estructurados de producto y local, medición de Analytics y Ads lista para activar |
-| Formularios | Pedidos, contacto, suscripción y sugerencias, con Netlify Forms |
+| Formularios | Pedidos, contacto y suscripción, con Netlify Forms |
 
 ## 2. Cómo funciona (para entender qué se puede esperar)
 
@@ -58,10 +58,10 @@ Si al entrar ves **“El panel todavía no está configurado”**, el mensaje in
 Variables opcionales: `ADMIN_USER` (cambia el usuario), `GITHUB_BRANCH` (si el sitio se publica desde otra rama) y `GITHUB_REPO`.
 
 ### Formularios
-1. En Netlify abrí **Forms**: tienen que aparecer `pedido`, `contacto`, `suscripcion` y `sugerencias`.
+1. En Netlify abrí **Forms**: tienen que aparecer `pedido`, `contacto` y `suscripcion`.
 2. Si no aparecen, activá **Form detection** en **Site configuration → Forms** y volvé a publicar.
 3. En **Forms → Form notifications → Add notification → Email** configurá el aviso para `pedido` y `contacto`. Así te llega cada pedido por mail.
-4. Para ver o exportar los mensajes: **Forms → (formulario) → Export CSV**.
+4. Para ver o exportar los mensajes: **Forms → (formulario) → Export CSV**. La suscripción solo guarda los emails: el sitio no envía newsletters por sí solo, los mails se mandan desde tu propia herramienta de correo.
 5. Netlify limita los envíos de formularios por mes en el plan gratis. Revisá el límite vigente en su página de precios antes de empezar una campaña.
 
 ## 4. Completar los datos reales antes de anunciar

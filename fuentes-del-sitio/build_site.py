@@ -16,6 +16,7 @@ import re
 import shutil
 import sys
 import unicodedata
+import urllib.parse
 
 AQUI = os.path.dirname(os.path.abspath(__file__))
 SITE = os.path.join(os.path.dirname(AQUI), 'funnyfoot-sitio')
@@ -111,6 +112,25 @@ def abs_url(path):
 
 
 SPRITE = open(os.path.join(AQUI, 'sprite.svg.html'), encoding='utf-8').read()
+_NUEVOS = open(os.path.join(AQUI, 'iconos-nuevos.svg.html'), encoding='utf-8').read()
+SPRITE = SPRITE.replace('</defs>', _NUEVOS + '</defs>', 1)
+
+# Los valores de "icono" que ya están guardados en el catálogo se conservan: cada uno se dibuja con una ilustración propia.
+CAT_ART = {'spark': 'ic-shoe-led', 'shield': 'ic-boot', 'heart': 'ic-shoe', 'star': 'ic-shoe-sport', 'shirt': 'ic-sandal', 'users': 'ic-shoe'}
+
+
+def cat_art(c):
+    return CAT_ART.get((c or {}).get('icono'), 'ic-shoe')
+
+
+def prod_art(p):
+    cat = CAT_BY_ID.get(p.get('categoria'))
+    art = cat_art(cat)
+    if art == 'ic-boot':
+        return 'ic-boot'
+    if p['led']:
+        return 'ic-shoe-led'
+    return art if art in ('ic-shoe-sport', 'ic-sandal') else 'ic-shoe'
 
 ICON_X = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><line x1="4" y1="4" x2="20" y2="20"/><line x1="20" y1="4" x2="4" y2="20"/></svg>'
 ICON_PLUS = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>'
@@ -176,6 +196,20 @@ def head(title, desc, path, robots='index,follow,max-image-preview:large', ld=No
 ''' % dict(title=esc(title), desc=esc(desc), robots=robots, url=url, site=esc(NAME), img=esc(og_image), ld=ld_html)
 
 
+def announce():
+    items = []
+    if T.get('envioGratisDesde'):
+        items.append(('truck', 'Envío gratis desde %s' % money(T['envioGratisDesde'])))
+    if T.get('cuotasSinInteres', 0) >= 2 and T.get('metodosPago', {}).get('tarjeta'):
+        items.append(('card', '%d cuotas sin interés' % T['cuotasSinInteres']))
+    if T.get('descuentoTransferencia') and T.get('metodosPago', {}).get('transferencia'):
+        items.append(('spark', '%s%% OFF por transferencia' % num(T['descuentoTransferencia'])))
+    barrio = N['direccion2'].split(',')[0].strip()
+    items.append(('map', 'Retiro sin cargo en %s' % barrio))
+    return '<div class="announce"><div class="wrap announce-in">%s</div></div>' % ''.join(
+        '<span>%s%s</span>' % (ic(i, 'ic'), esc(t)) for i, t in items)
+
+
 def header(active):
     items = [('inicio', '/', 'Inicio'), ('productos', '/productos/', 'Productos'), ('nosotros', '/nosotros/', 'Nosotros'), ('contacto', '/contacto/', 'Contacto')]
     act = ' aria-current="page" class="active"'
@@ -184,6 +218,7 @@ def header(active):
         return ''.join('<a href="%s"%s>%s</a>' % (u, act if k == active else '', t) for k, u, t in items)
     return '''<body>
 <a class="skip" href="#contenido">Saltar al contenido</a>
+%(ann)s
 <header class="site">
   <div class="wrap bar">
     <a href="/" class="brandmark" aria-label="%(n)s - Inicio">
@@ -197,43 +232,7 @@ def header(active):
   </div>
 </header>
 <div id="mobileNav">%(l)s</div>
-''' % dict(n=esc(NAME), l=links(), burger=ICON_BURGER, cart=ICON_CART)
-
-
-def feedback(path):
-    return '''
-<section class="wrap fb" aria-labelledby="fbTitle">
-  <div class="fb-card">
-    <div class="fb-intro">
-      <span class="kicker"><span class="dashline"><span></span><span></span><span></span></span>TU OPINIÓN NOS AYUDA</span>
-      <h2 id="fbTitle">¿Qué agregarías, quitarías o cambiarías?</h2>
-      <p>Contanos qué te gustó, qué te sobra y qué te falta en nuestra tienda. Leemos cada mensaje antes de decidir los próximos cambios.</p>
-      <p>Tu comentario no se publica en la página.</p>
-    </div>
-    <form class="fb-form" name="sugerencias" method="POST" action="/gracias-sugerencia/" data-netlify="true" netlify-honeypot="bot-field">
-      <input type="hidden" name="form-name" value="sugerencias">
-      <input type="hidden" name="pagina" value="%s">
-      <p class="hp" aria-hidden="true"><label>No completar este campo <input name="bot-field" tabindex="-1" autocomplete="off"></label></p>
-      <fieldset class="fb-types">
-        <legend>Mi comentario es para</legend>
-        <label class="fb-opt"><input type="radio" name="tipo" value="agregar" checked><span>Agregar algo</span></label>
-        <label class="fb-opt"><input type="radio" name="tipo" value="quitar"><span>Quitar algo</span></label>
-        <label class="fb-opt"><input type="radio" name="tipo" value="cambiar"><span>Cambiar algo</span></label>
-        <label class="fb-opt"><input type="radio" name="tipo" value="otro"><span>Otra idea</span></label>
-      </fieldset>
-      <div class="field">
-        <label for="fbText">Tu mensaje</label>
-        <textarea id="fbText" name="mensaje" rows="4" required minlength="5" maxlength="1000" placeholder="Por ejemplo: agregaría una guía de talles."></textarea>
-      </div>
-      <div class="field">
-        <label for="fbName">Tu nombre (opcional)</label>
-        <input id="fbName" name="nombre" maxlength="60" autocomplete="given-name">
-      </div>
-      <button type="submit" class="btn btn-pink btn-block">Enviar comentario</button>
-    </form>
-  </div>
-</section>
-''' % esc(path)
+''' % dict(n=esc(NAME), l=links(), burger=ICON_BURGER, cart=ICON_CART, ann=announce())
 
 
 def footer_tpl():
@@ -280,6 +279,8 @@ def footer_tpl():
   </div>
 </footer>
 
+<a class="wa-float" href="%(wa)s" target="_blank" rel="noopener" data-wa aria-label="Escribinos por WhatsApp">%(iwa)s<span>WhatsApp</span></a>
+
 <div id="toast" role="status" aria-live="polite"><span class="dot"></span><span id="toastMsg">¡Agregado al carrito!</span></div>
 
 <div class="overlay" id="overlay"></div>
@@ -306,8 +307,6 @@ def page(path, title, desc, active, body, robots='index,follow,max-image-preview
     out = head(title, desc, path, robots, ld, og_image) + header(active)
     out = out.replace('<body>', '<body%s>' % body_attr, 1)
     out += '<main id="contenido">\n' + body + '\n</main>\n'
-    if with_feedback:
-        out += feedback(path)
     foot = footer_tpl() % dict(n=esc(NAME), wa=wa_link(), iwa=ICON_WA, cats=cat_links_html(), d1=esc(N['direccion1']),
                            d2=esc(N['direccion2']), hor=esc(N['horarios']), tel=esc(N['telefonoVisible']),
                            x=ICON_X, sprite=SPRITE, extra=extra_js)
@@ -332,36 +331,41 @@ def write(path, content):
 
 # ---------- componentes ----------
 def card(p, h='h3'):
-    cat = CAT_BY_ID.get(p.get('categoria'))
     sizes = ''.join('<option value="%d">Talle %d</option>' % (s, s) for s in p['talles'])
     chips = ''
     if p['led']:
-        chips += '<span class="led-chip"><svg width="9" height="9" viewBox="0 0 24 24" aria-hidden="true"><use href="#ic-spark"/></svg>LED</span>'
+        chips += '<span class="led-chip"><svg width="10" height="10" viewBox="0 0 24 24" aria-hidden="true"><use href="#ic-spark"/></svg>LED</span>'
     if p['agotado']:
         chips += '<span class="sold-chip">Agotado</span>'
     if p['imagenes']:
         media = '<a class="card-media has-img" href="%s" aria-label="Ver %s">%s<img src="/%s" alt="%s" loading="lazy" decoding="async"></a>' % (
             p_url(p), esc(p['nombre']), chips, esc(p['imagenes'][0]), esc(p['nombre']))
     else:
-        media = '<a class="card-media" style="background:%s" href="%s" aria-label="Ver %s">%s<svg style="color:%s" role="img" aria-label="Ilustración de zapatilla %s"><use href="#ic-sneaker"/></svg></a>' % (
-            tint(p['color'], .82), p_url(p), esc(p['nombre']), chips, esc(p['color']), esc(p['colorNombre'].lower()))
+        media = '<a class="card-media art" style="--tint:%s" href="%s" aria-label="Ver %s">%s<svg style="--c:%s;color:%s" role="img" aria-label="Ilustración de zapatilla %s"><use href="#%s"/></svg></a>' % (
+            tint(p['color'], .8), p_url(p), esc(p['nombre']), chips, esc(p['color']), esc(p['color']), esc(p['colorNombre'].lower()), prod_art(p))
     meta = ' · '.join(x for x in [p['colorNombre'], ('Talles %d–%d' % (p['talles'][0], p['talles'][-1])) if p['talles'] else ''] if x)
+    cuotas = ''
+    n = T.get('cuotasSinInteres', 0)
+    if n >= 2 and T.get('metodosPago', {}).get('tarjeta'):
+        cuotas = '<span class="cuotas">%d cuotas de %s</span>' % (n, money(p['precio'] / n))
     if p['agotado'] or not p['talles']:
-        foot = '<div class="card-foot"><a class="btn btn-ghost-pink btn-sm btn-block" href="%s">%s</a></div>' % (p_url(p), 'Ver producto')
+        foot = '<div class="card-foot one"><a class="btn btn-ghost-pink btn-sm btn-block" href="%s">Ver producto</a></div>' % p_url(p)
     else:
         foot = '''<div class="card-foot">
     <label class="sr-only" for="size-%(id)d">Talle de %(n)s</label>
     <select class="size-select" id="size-%(id)d"><option value="">Talle</option>%(sizes)s</select>
-    <button type="button" class="add-btn" data-add="%(id)d" aria-label="Agregar %(n)s al carrito">%(plus)s</button>
-  </div>''' % dict(id=p['id'], n=esc(p['nombre']), sizes=sizes, plus=ICON_PLUS)
+    <button type="button" class="add-btn" data-add="%(id)d" aria-label="Agregar %(n)s al carrito"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><use href="#ic-cart-plus"/></svg><span>Agregar</span></button>
+  </div>''' % dict(id=p['id'], n=esc(p['nombre']), sizes=sizes)
     return '''<article class="card-product" data-id="%(id)d" data-name="%(dn)s">
   %(media)s
-  <%(h)s><a href="%(url)s">%(n)s</a></%(h)s>
-  <div class="card-meta"><span>%(meta)s</span></div>
-  <div class="price">%(price)s</div>
+  <div class="card-body">
+    <%(h)s><a href="%(url)s">%(n)s</a></%(h)s>
+    <div class="card-meta"><span>%(meta)s</span></div>
+    <div class="price-row"><span class="price">%(price)s</span>%(cuotas)s</div>
+  </div>
   %(foot)s
 </article>''' % dict(id=p['id'], dn=esc(p['nombre'].lower()), media=media, h=h, url=p_url(p), n=esc(p['nombre']),
-                     meta=esc(meta), price=money(p['precio']), foot=foot)
+                     meta=esc(meta), price=money(p['precio']), cuotas=cuotas, foot=foot)
 
 
 def pagehead(h1, intro, crumbs=None):
@@ -372,14 +376,14 @@ def pagehead(h1, intro, crumbs=None):
             parts.append('<a href="%s">%s</a>' % (url, esc(label)) if url else '<span aria-current="page">%s</span>' % esc(label))
         cr = '<nav class="crumbs" aria-label="Migas de pan">' + ' <span aria-hidden="true">›</span> '.join(parts) + '</nav>'
     intro_html = '<p>%s</p>' % esc(intro) if intro else ''
-    return '''<div class="wrap">
+    return '''<div class="page-band"><div class="wrap">
   <div class="page-head">
     %s
     <div class="dashline" style="margin-bottom:16px;"><span></span><span></span><span></span></div>
     <h1>%s</h1>
     %s
   </div>
-</div>''' % (cr, esc(h1), intro_html)
+</div></div>''' % (cr, esc(h1), intro_html)
 
 
 def breadcrumb_ld(items):
@@ -445,17 +449,54 @@ def payment_options():
 
 
 # ---------- páginas ----------
+MAP_SVG = '''<svg viewBox="0 0 420 320" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Mapa ilustrado de Caballito con la ubicación del local">
+  <rect width="420" height="320" fill="#FFF1F6"/>
+  <g fill="#FFE3EF"><rect x="14" y="14" width="120" height="82" rx="10"/><rect x="154" y="14" width="96" height="82" rx="10"/><rect x="270" y="14" width="136" height="82" rx="10"/>
+  <rect x="14" y="116" width="120" height="70" rx="10"/><rect x="270" y="116" width="136" height="70" rx="10"/>
+  <rect x="14" y="206" width="120" height="100" rx="10"/><rect x="154" y="206" width="96" height="100" rx="10"/><rect x="270" y="206" width="136" height="100" rx="10"/></g>
+  <path d="M-10 168 C90 150 190 176 430 142" fill="none" stroke="#fff" stroke-width="30" stroke-linecap="round"/>
+  <path d="M-10 168 C90 150 190 176 430 142" fill="none" stroke="#ED0B6F" stroke-width="3" stroke-dasharray="2 9" stroke-linecap="round"/>
+  <g stroke="#fff" stroke-width="12" stroke-linecap="round"><path d="M144 -10V330"/><path d="M260 -10V330"/></g>
+  <g fill="#D9A3BB" opacity=".9"><circle cx="70" cy="55" r="6"/><circle cx="204" cy="60" r="6"/><circle cx="340" cy="58" r="6"/><circle cx="70" cy="250" r="6"/><circle cx="330" cy="248" r="6"/></g>
+  <ellipse cx="206" cy="163" rx="26" ry="9" fill="#1B1226" opacity=".18"/>
+  <path d="M206 160C206 160 176 128 176 106a30 30 0 0 1 60 0c0 22-30 54-30 54Z" fill="#ED0B6F" stroke="#1B1226" stroke-width="3" stroke-linejoin="round"/>
+  <circle cx="206" cy="106" r="11" fill="#fff" stroke="#1B1226" stroke-width="3"/>
+</svg>'''
+
+
 def pg_home():
     feat = [p for p in PRODUCTS if p.get('destacado')][:8] or PRODUCTS[:6]
-    cats = ''.join('<a class="cat-chip" href="%s">%s<b>%s</b><span>%s</span></a>' % (
-        c_url(c), ic(c['icono']), esc(c['nombre']), esc(c['resumen'])) for c in CATS)
+    hero_cards = ''
+    for i, p in enumerate(feat[:2]):
+        if p['imagenes']:
+            media = '<div class="hc-media has-img"><img src="/%s" alt="%s" decoding="async"></div>' % (esc(p['imagenes'][0]), esc(p['nombre']))
+        else:
+            media = '<div class="hc-media" style="--tint:%s"><svg style="--c:%s;color:%s" role="img" aria-label="Ilustración de zapatilla"><use href="#%s"/></svg></div>' % (
+                tint(p['color'], .8), esc(p['color']), esc(p['color']), prod_art(p))
+        hero_cards += '<a class="hero-card hc%d" href="%s">%s<b>%s</b><span class="hc-price">%s</span></a>' % (i + 1, p_url(p), media, esc(p['nombre']), money(p['precio']))
+    cats = ''
+    for i, c in enumerate(CATS):
+        n = len(cat_products(c['id']))
+        cats += '''<a class="cat-tile t%d" href="%s">
+      <span class="cat-art"><svg viewBox="0 0 120 80" aria-hidden="true"><use href="#%s"/></svg></span>
+      <h3>%s</h3><p>%s</p>
+      <span class="cat-meta"><span>%d modelo%s</span><span class="cat-go">%s</span></span></a>''' % (
+            i % 4, c_url(c), cat_art(c), esc(c['nombre']), esc(c['resumen']), n, '' if n == 1 else 's', ic('arrow', 'ic'))
     feat_html = '\n'.join(card(p) for p in feat)
+    free = T.get('envioGratisDesde')
+    trust = [
+        ('truck', 'Envíos a todo el país', ('Gratis desde %s' % money(free)) if free else 'Por correo a todo el país'),
+        ('map', 'Retiro sin cargo', 'En %s, Caballito' % esc(N['direccion1'])),
+        ('card', 'Pagá como prefieras', ('Hasta %d cuotas sin interés' % T['cuotasSinInteres']) if T.get('cuotasSinInteres', 0) >= 2 and T.get('metodosPago', {}).get('tarjeta') else 'Transferencia, Mercado Pago y efectivo'),
+        ('swap', 'Cambios sin vueltas', 'Hasta %d días para cambiar el talle' % T.get('diasCambio', 30)),
+    ]
+    trust_html = ''.join('<div class="trust-item"><span class="trust-ic">%s</span><div><b>%s</b><span>%s</span></div></div>' % (ic(i), esc(t), x) for i, t, x in trust)
     body = '''<section class="hero">
   <div class="hero-panel"></div>
   <div class="wrap hero-inner">
     <div class="hero-copy">
       <span class="kicker"><span class="dashline"><span></span><span></span><span></span></span>TIENDA FAMILIAR EN CABALLITO</span>
-      <h1>Zapatillas que iluminan cada paso</h1>
+      <h1>Zapatillas que <span class="hl">iluminan</span> cada paso</h1>
       <p>Calzado infantil con estilo, comodidad y mucha diversión: personajes con luz LED, botas FERLI y deportivas JAGUAR. Del local de barrio a tu casa, en todo el país.</p>
       <div class="hero-cta">
         <a href="/productos/" class="btn btn-pink">Ver catálogo</a>
@@ -463,23 +504,24 @@ def pg_home():
       </div>
     </div>
     <div class="hero-visual">
-      <div class="hero-badge">
-        <img src="/assets/img/logo-funny-foot-blanco.png" alt="%(n)s" width="238" height="107">
-        <div class="spark-row"><span class="dot"></span> Zapatillas con luz LED al pisar</div>
+      <div class="hero-stack">%(hcards)s
+        <div class="hero-badge"><img src="/assets/img/logo-funny-foot-blanco.png" alt="%(n)s" width="120" height="54"></div>
       </div>
     </div>
   </div>
 </section>
 
+<section class="trust"><div class="wrap"><div class="trust-in">%(trust)s</div></div></section>
+
 <section class="wrap">
-  <div class="section-head"><h2>Elegí por categoría</h2></div>
-  <div class="cat-row">%(cats)s</div>
+  <div class="section-head"><div><span class="eyebrow">Categorías</span><h2>Elegí por categoría</h2></div></div>
+  <div class="cat-grid">%(cats)s</div>
 </section>
 
 <section class="wrap">
   <div class="section-head">
-    <div><h2>Destacados</h2><p>Algunos de los modelos que tenemos disponibles.</p></div>
-    <a href="/productos/" class="btn btn-outline btn-sm">Ver todo</a>
+    <div><span class="eyebrow">Destacados</span><h2>Los que más se piden</h2><p>Algunos de los modelos que tenemos disponibles.</p></div>
+    <a href="/productos/" class="btn btn-outline btn-sm">Ver todo el catálogo</a>
   </div>
   <div class="grid-products">
 %(feat)s
@@ -487,7 +529,7 @@ def pg_home():
 </section>
 
 <section class="wrap">
-  <div class="section-head"><h2>Cómo comprar</h2></div>
+  <div class="section-head"><div><span class="eyebrow">Paso a paso</span><h2>Cómo comprar</h2></div></div>
   <ol class="steps-list">
     <li><b>Elegí modelo y talle</b><span>Recorré el catálogo y sumá al carrito lo que te guste.</span></li>
     <li><b>Completá tus datos y confirmá</b><span>Elegís envío o retiro y el medio de pago. Recibís tu número de pedido.</span></li>
@@ -496,25 +538,25 @@ def pg_home():
 </section>
 
 <section class="wrap">
-  <div class="section-head"><h2>Por qué elegirnos</h2></div>
+  <div class="section-head"><div><span class="eyebrow">Nuestra forma de trabajar</span><h2>Por qué elegirnos</h2></div></div>
   <div class="props-grid">
     <div class="prop">%(i1)s<h3>Calidad que dura</h3><p>Materiales resistentes pensados para el ritmo de los más chicos.</p></div>
     <div class="prop">%(i2)s<h3>Comodidad de verdad</h3><p>Modelos pensados para usar todo el día.</p></div>
     <div class="prop">%(i3)s<h3>Atención de barrio</h3><p>Te asesoramos como en el local de toda la vida, ahora también online.</p></div>
-    <div class="prop">%(i4)s<h3>Envíos a todo el país</h3><p>Recibilo en tu casa o retiralo sin cargo en nuestro local de Caballito.</p></div>
+    <div class="prop">%(i4)s<h3>Diversión en cada paso</h3><p>Personajes y luces que se encienden al pisar.</p></div>
   </div>
 </section>
 
 <section class="wrap">
-  <div class="section-head"><h2>Nuestro local</h2></div>
+  <div class="section-head"><div><span class="eyebrow">Visitanos</span><h2>Nuestro local</h2></div></div>
   <div class="store-card">
     <div class="store-info">
       <div class="store-row">%(imap)s<div><b>%(d1)s</b><span>%(d2)s</span></div></div>
       <div class="store-row">%(iclock)s<div><b>Horarios</b><span>%(hor)s</span></div></div>
       <div class="store-row">%(iphone)s<div><b>WhatsApp</b><span>%(tel)s</span></div></div>
-      <a href="/nosotros/" class="btn btn-primary btn-sm" style="width:fit-content;">Conocer la tienda</a>
+      <div class="store-actions"><a href="%(maps)s" target="_blank" rel="noopener" class="btn btn-primary btn-sm">Cómo llegar</a><a href="/nosotros/" class="btn btn-outline btn-sm">Conocer la tienda</a></div>
     </div>
-    <div class="store-map"><svg width="120" height="120" viewBox="0 0 24 24" style="color:var(--pink)" aria-hidden="true"><use href="#ic-map"/></svg></div>
+    <div class="store-map">%(map)s</div>
   </div>
 </section>
 
@@ -532,9 +574,10 @@ def pg_home():
       <button type="submit" class="btn btn-primary">Suscribirme</button>
     </form>
   </div>
-</section>''' % dict(n=esc(NAME), cats=cats, feat=feat_html, i1=ic('shield'), i2=ic('heart'), i3=ic('users'), i4=ic('truck'),
+</section>''' % dict(n=esc(NAME), hcards=hero_cards, trust=trust_html, cats=cats, feat=feat_html, i1=ic('shield'), i2=ic('heart'), i3=ic('users'), i4=ic('spark'),
                      imap=ic('map'), iclock=ic('clock'), iphone=ic('phone'), d1=esc(N['direccion1']), d2=esc(N['direccion2']),
-                     hor=esc(N['horarios']), tel=esc(N['telefonoVisible']))
+                     hor=esc(N['horarios']), tel=esc(N['telefonoVisible']), map=MAP_SVG,
+                     maps='https://www.google.com/maps/search/?api=1&query=' + urllib.parse.quote('%s, %s' % (N['direccion1'], N['direccion2'])))
     return page('/', '%s | Zapatillas y calzado infantil en Caballito' % NAME.replace(' Calzados', ''),
                 'Zapatillas con luz LED, botas FERLI y deportivas JAGUAR para niñas y niños. Local en Caballito, pedidos online para todo el país.',
                 'inicio', body, ld=[local_business_ld()])
@@ -572,7 +615,7 @@ def pg_product(p):
                     ' active' if i == 0 else '', esc(src), i + 1, esc(src)) for i, src in enumerate(p['imagenes'])) + '</div>'
         gallery = '<div class="pdp-main"><img id="pdpMain" src="/%s" alt="%s" decoding="async"></div>%s' % (esc(p['imagenes'][0]), esc(p['nombre']), thumbs)
     else:
-        gallery = '<div class="pdp-main" style="background:%s"><svg style="color:%s" role="img" aria-label="Ilustración de zapatilla"><use href="#ic-sneaker"/></svg></div>' % (tint(p['color'], .82), esc(p['color']))
+        gallery = '<div class="pdp-main art" style="--tint:%s"><svg style="--c:%s;color:%s" role="img" aria-label="Ilustración de zapatilla"><use href="#%s"/></svg></div>' % (tint(p['color'], .8), esc(p['color']), esc(p['color']), prod_art(p))
     chips = ''
     if p['led']:
         chips += '<span class="led-chip static">LED · luz al pisar</span>'
@@ -671,13 +714,14 @@ def pg_nosotros():
       <div class="store-row">%(imap)s<div><b>%(d1)s</b><span>%(d2)s</span></div></div>
       <div class="store-row">%(iclock)s<div><b>Horarios</b><span>%(hor)s</span></div></div>
       <div class="store-row">%(itruck)s<div><b>Retiro en local</b><span>Sin cargo, al confirmar tu pedido</span></div></div>
-      <a href="/contacto/" class="btn btn-primary btn-sm" style="width:fit-content;">Escribinos</a>
+      <div class="store-actions"><a href="%(maps)s" target="_blank" rel="noopener" class="btn btn-primary btn-sm">Cómo llegar</a><a href="/contacto/" class="btn btn-outline btn-sm">Escribinos</a></div>
     </div>
-    <div class="store-map"><svg width="120" height="120" viewBox="0 0 24 24" style="color:var(--pink)" aria-hidden="true"><use href="#ic-map"/></svg></div>
+    <div class="store-map">%(map)s</div>
   </div>
 </section>''' % dict(ph=pagehead('De un local de Caballito a tu casa', 'Conocé quiénes somos y dónde encontrarnos.'), n=esc(NAME),
                      i1=ic('users'), i2=ic('shield'), i3=ic('spark'), i4=ic('heart'), imap=ic('map'), iclock=ic('clock'), itruck=ic('truck'),
-                     d1=esc(N['direccion1']), d2=esc(N['direccion2']), hor=esc(N['horarios']))
+                     d1=esc(N['direccion1']), d2=esc(N['direccion2']), hor=esc(N['horarios']), map=MAP_SVG,
+                     maps='https://www.google.com/maps/search/?api=1&query=' + urllib.parse.quote('%s, %s' % (N['direccion1'], N['direccion2'])))
     return page('/nosotros/', 'Nosotros | %s, local de calzado en Caballito' % NAME.replace(' Calzados', ''),
                 'Funny Foot es un local familiar de calzado infantil en Caballito, Buenos Aires. Conocé nuestra historia, horarios y cómo llegar.',
                 'nosotros', body, ld=[local_business_ld()])
@@ -951,7 +995,7 @@ def catalogo_js():
 
 
 def clean_generated():
-    for d in ('producto', 'productos'):
+    for d in ('producto', 'productos', 'gracias-sugerencia'):
         full = os.path.join(SITE, d)
         if os.path.isdir(full):
             shutil.rmtree(full)
@@ -970,7 +1014,6 @@ def main():
     for slug, pol in policies().items():
         write('/%s/' % slug, pg_policy(slug, pol))
     write('/gracias/', pg_thanks('gracias', '¡Gracias por escribirnos!', 'Recibimos tu mensaje y te respondemos a la brevedad.', True))
-    write('/gracias-sugerencia/', pg_thanks('gracias-sugerencia', '¡Gracias por tu comentario!', 'Leemos cada sugerencia para mejorar la tienda.', False))
     write('/gracias-suscripcion/', pg_thanks('gracias-suscripcion', '¡Ya estás en la lista!', 'Te vamos a avisar cuando haya novedades.', False))
     write('/checkout/', pg_checkout())
     write('/pedido-recibido/', pg_recibido())

@@ -10,7 +10,7 @@
   var API = '/.netlify/functions/admin';
   var USUARIO = 'PlataformasyNegocios';
   var MAX_FOTOS = 6;
-  var ICONOS = [['spark', 'Destello'], ['shield', 'Escudo'], ['heart', 'Corazón'], ['star', 'Estrella'], ['shirt', 'Prenda'], ['users', 'Personas']];
+  var ICONOS = [['spark', 'Zapatilla con luz'], ['shield', 'Bota'], ['heart', 'Zapatilla urbana'], ['star', 'Zapatilla deportiva'], ['shirt', 'Sandalia']];
   var SNEAKER = '<svg viewBox="0 0 120 80" aria-hidden="true" style="color:%C"><g fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><line x1="2" y1="26" x2="16" y2="26"/><line x1="2" y1="34" x2="20" y2="34"/><path d="M28 46 C30 36 36 24 46 18 C50 24 58 27 66 27 L66 20 C74 20 84 24 92 32 C100 39 106 40 112 40 C114 48 112 58 104 62 L34 62 C28 62 26 54 28 46 Z"/><path d="M34 62 L34 68 L112 68 L112 60"/></g></svg>';
 
   var metaBase = document.querySelector('meta[name="ff-base"]');
