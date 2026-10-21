@@ -140,7 +140,7 @@ ICON_WA = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="c
 
 
 def ic(name, cls='ic'):
-    return '<svg class="%s" viewBox="0 0 24 24" aria-hidden="true"><use href="#ic-%s"/></svg>' % (cls, name)
+    return '<svg class="%s" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><use href="#ic-%s"/></svg>' % (cls, name)
 
 
 def wa_link():
@@ -207,7 +207,7 @@ def announce():
     barrio = N['direccion2'].split(',')[0].strip()
     items.append(('map', 'Retiro sin cargo en %s' % barrio))
     return '<div class="announce"><div class="wrap announce-in">%s</div></div>' % ''.join(
-        '<span>%s%s</span>' % (ic(i, 'ic'), esc(t)) for i, t in items)
+        '<span>%s%s</span>' % (ic(i, 'ic').replace('width="24" height="24"', 'width="16" height="16"'), esc(t)) for i, t in items)
 
 
 def header(active):
@@ -1089,6 +1089,30 @@ def clean_generated():
             shutil.rmtree(full)
 
 
+def version_assets():
+    """Agrega ?v=<huella> a los CSS/JS propios para que el navegador nunca use una copia vieja tras publicar."""
+    import hashlib
+    ref = re.compile(r'(/assets/(?:css|js)/[a-z0-9._-]+\.(?:css|js))(?:\?v=[0-9a-f]+)?(?=")')
+    cache = {}
+
+    def sub(m):
+        path = m.group(1)
+        if path not in cache:
+            fp = os.path.join(SITE, path.lstrip('/'))
+            cache[path] = hashlib.md5(open(fp, 'rb').read()).hexdigest()[:10] if os.path.exists(fp) else None
+        return '%s?v=%s' % (path, cache[path]) if cache[path] else m.group(0)
+    for dp, _, fs in os.walk(SITE):
+        if os.path.relpath(dp, SITE).split(os.sep)[0] == 'admin':
+            continue
+        for f in fs:
+            if f.endswith('.html'):
+                fp = os.path.join(dp, f)
+                t = open(fp, encoding='utf-8').read()
+                n = ref.sub(sub, t)
+                if n != t:
+                    open(fp, 'w', encoding='utf-8').write(n)
+
+
 def main():
     clean_generated()
     write('/', pg_home())
@@ -1123,6 +1147,7 @@ def main():
         fh.write('\n'.join(sm) + '\n')
     with open(os.path.join(SITE, 'robots.txt'), 'w', encoding='utf-8') as fh:
         fh.write('User-agent: *\nAllow: /\nDisallow: /admin/\n\nSitemap: %s/sitemap.xml\n' % BASE)
+    version_assets()
     print('Sitio generado: %d productos, %d categorías, %d URLs en el sitemap' % (len(PRODUCTS), len(CATS), len(urls)))
 
 
