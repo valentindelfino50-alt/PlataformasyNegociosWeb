@@ -151,7 +151,7 @@ def wa_link():
 def local_business_ld():
     ld = {
         '@context': 'https://schema.org', '@type': 'ShoeStore', 'name': NAME, 'url': abs_url('/'),
-        'logo': abs_url('/assets/img/logo-funny-foot-rosa.png'), 'image': abs_url('/assets/img/og-funny-foot.png'),
+        'logo': {'@type': 'ImageObject', 'url': abs_url('/logo.png'), 'width': 1200, 'height': 1200}, 'image': abs_url('/assets/img/og-funny-foot.png'),
         'telephone': '+' + N['whatsapp'],
         'address': {'@type': 'PostalAddress', 'streetAddress': N['direccion1'], 'addressLocality': 'Caballito',
                     'addressRegion': 'Ciudad Autónoma de Buenos Aires', 'addressCountry': 'AR'},
@@ -183,6 +183,8 @@ def head(title, desc, path, robots='index,follow,max-image-preview:large', ld=No
 <meta property="og:description" content="%(desc)s">
 <meta property="og:url" content="%(url)s">
 <meta property="og:image" content="%(img)s">
+<meta property="og:logo" content="%(logo)s">
+<link rel="image_src" href="%(logo)s">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
@@ -193,7 +195,7 @@ def head(title, desc, path, robots='index,follow,max-image-preview:large', ld=No
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/css/estilos.css">
 %(ld)s</head>
-''' % dict(title=esc(title), desc=esc(desc), robots=robots, url=url, site=esc(NAME), img=esc(og_image), ld=ld_html)
+''' % dict(title=esc(title), desc=esc(desc), robots=robots, url=url, site=esc(NAME), img=esc(og_image), logo=esc(abs_url('/logo.png')), ld=ld_html)
 
 
 def announce():
@@ -222,7 +224,7 @@ def header(active):
 <header class="site">
   <div class="wrap bar">
     <a href="/" class="brandmark" aria-label="%(n)s - Inicio">
-      <img src="/assets/img/logo-funny-foot-rosa.png" alt="%(n)s" width="76" height="34">
+      <img src="/assets/img/logo-funny-foot-rosa.png" alt="Logo de %(n)s" width="112" height="46">
     </a>
     <nav class="primary" aria-label="Navegación principal">%(l)s</nav>
     <div class="header-actions">
@@ -241,7 +243,7 @@ def footer_tpl():
   <div class="wrap">
     <div class="foot-grid">
       <div>
-        <div class="brandmark"><img src="/assets/img/logo-funny-foot-blanco.png" alt="%(n)s" width="67" height="30" loading="lazy"></div>
+        <div class="brandmark"><img src="/assets/img/logo-funny-foot-blanco.png" alt="Logo de %(n)s" width="107" height="44" loading="lazy"></div>
         <p class="desc">Calzado infantil con estilo, calidad y mucha diversión. Local de barrio en Caballito, pedidos online para toda la Argentina.</p>
         <div class="social-row">
           <a href="%(wa)s" target="_blank" rel="noopener" aria-label="Escribinos por WhatsApp" data-wa>%(iwa)s</a>
@@ -521,7 +523,7 @@ def pg_home():
     </div>
     <div class="hero-visual">
       <div class="hero-stack">%(hcards)s
-        <div class="hero-badge"><img src="/assets/img/logo-funny-foot-blanco.png" alt="%(n)s" width="120" height="54"></div>
+        <div class="hero-badge"><img src="/assets/img/logo-funny-foot-blanco.png" alt="Logo de %(n)s" width="124" height="51"></div>
       </div>
     </div>
   </div>

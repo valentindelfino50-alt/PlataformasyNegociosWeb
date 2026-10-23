@@ -119,6 +119,12 @@ Google Ads exige datos del negocio reales y verificables. Hoy el sitio tiene los
 
 El sitio no necesita aparecer en el buscador para anunciar: Google Ads revisa la página de destino de cada anuncio.
 
+**Logotipo para Google Ads** (ya están en el sitio, listos para subir como imagen)
+- Cuadrado 1:1 (1200 × 1200): `assets/img/logo-google-ads-cuadrado-1200x1200.png`
+- Horizontal 4:1 (1200 × 300): `assets/img/logo-google-ads-horizontal-1200x300.png`
+- En Google Ads: **Recursos → Imágenes → Logotipos → subir** y elegí esos dos archivos (se pueden descargar desde la carpeta del repositorio o desde `tu-sitio.netlify.app/logo.png`).
+- Además el sitio declara el logo en el encabezado, en `logo.png` y en los datos estructurados, para que Google lo detecte solo.
+
 **Días 1 a 3: publicar y probar**
 - [ ] Sitio publicado, con datos reales (sección 4) y la dirección del sitio cargada en el panel.
 - [ ] En tu celular: ver un producto, agregarlo, finalizar la compra, comprobar que el pedido aparece en **Forms → pedido** y que llega el email.

@@ -787,3 +787,9 @@
   .faq-cta p{color:#d8d0e3;}
 }
 .cat-art.photo{padding:6px 0 12px;}
+
+/* Logo oficial (más grande para que se lea) */
+.brandmark img{height:46px;width:auto;}
+footer.site .brandmark img{height:44px;}
+.hero-badge img{width:124px;height:auto;}
+@media (max-width:760px){.brandmark img{height:40px;}}
