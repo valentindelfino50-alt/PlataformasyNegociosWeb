@@ -11,18 +11,18 @@
     "email": "funnyfootcalzados23@gmail.com"
   },
   "tienda": {
-    "envioGratisDesde": 50000,
+    "envioGratisDesde": 0,
     "costoEnvio": 4500,
     "descuentoTransferencia": 0,
     "cuotasSinInteres": 3,
     "diasCambio": 30,
     "plazoEnvio": "El tiempo estimado de entrega es de 2 a 5 días hábiles en CABA y GBA, y de 4 a 8 días hábiles en el resto del país.",
-    "datosTransferencia": "",
+    "datosTransferencia": "Alias: hadju230306",
     "metodosPago": {
       "transferencia": true,
-      "mercadopago": true,
+      "mercadopago": false,
       "efectivo": true,
-      "tarjeta": true
+      "tarjeta": false
     }
   },
   "categorias": [
