@@ -26,11 +26,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/css/estilos.css?v=5a1e603858">
+<link rel="stylesheet" href="/assets/css/estilos.css?v=8319f32015">
 </head>
 <body>
 <a class="skip" href="#contenido">Saltar al contenido</a>
-<div class="announce"><div class="wrap announce-in"><span><svg class="ic" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><use href="#ic-truck"/></svg>Envío gratis desde $50.000</span><span><svg class="ic" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><use href="#ic-card"/></svg>3 cuotas sin interés</span><span><svg class="ic" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><use href="#ic-map"/></svg>Retiro sin cargo en Caballito</span></div></div>
+<div class="announce"><div class="wrap announce-in"><span><svg class="ic" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><use href="#ic-map"/></svg>Retiro sin cargo en Caballito</span></div></div>
 <header class="site">
   <div class="wrap bar">
     <a href="/" class="brandmark" aria-label="Funny Foot Calzados - Inicio">
@@ -57,13 +57,19 @@
   <div class="pedido-ok" id="pedidoOk" hidden>
     <div class="success-box">
       <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M8 12.5l2.6 2.6L16 9.6"/></svg>
-      <h2 style="font-size:24px;">¡Recibimos tu pedido!</h2>
-      <p>Guardá tu número de pedido:</p>
+      <h2 style="font-size:24px;">¡Gracias por tu compra!</h2>
+      <p>Tu número de pedido es:</p>
       <div class="order-num" id="oNumero"></div>
       <p id="oAviso"></p>
     </div>
+    <div class="wa-cta" id="oWaBox">
+      <h2>Último paso: confirmá por WhatsApp</h2>
+      <p id="oWaTexto">Tocá el botón y se abre el chat con tu pedido ya escrito. Solo tenés que enviarlo.</p>
+      <a class="btn btn-wa btn-block" id="oWa" href="https://wa.me/5491126936890" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 20l1.3-4A8 8 0 1 1 9 19l-5 1Z"/><path d="M8.5 9.7c0 3.4 2.8 6.2 6.2 6.2"/></svg> Enviar mi pedido por WhatsApp</a>
+    </div>
+    <div class="co-next" id="oPago"></div>
     <div class="co-summary" style="max-width:640px;margin:0 auto;">
-      <h2>Detalle</h2>
+      <h2>Detalle de tu pedido</h2>
       <div id="oItems"></div>
       <div class="co-line"><span>Subtotal</span><span id="oSubtotal"></span></div>
       <div class="co-line" id="oDescRow" hidden><span>Descuento</span><span id="oDesc"></span></div>
@@ -71,9 +77,8 @@
       <div class="co-line total"><span>Total a pagar</span><span id="oTotal"></span></div>
       <p class="note-small" id="oEntrega"></p>
     </div>
-    <div class="co-next" id="oPago"></div>
     <div class="co-actions-row">
-      <a class="btn btn-wa" id="oWa" href="https://wa.me/5491126936890" target="_blank" rel="noopener">Confirmar por WhatsApp</a>
+      <a class="btn btn-outline" id="oMail" href="#" hidden>Guardar el resumen en mi email</a>
       <a class="btn btn-outline" href="/productos/">Seguir comprando</a>
     </div>
   </div>
@@ -213,8 +218,8 @@
 </defs>
 </svg>
 <script src="/assets/js/config.js?v=ca000dff70"></script>
-<script src="/assets/js/catalogo.js?v=2eb3b009c9"></script>
-<script src="/assets/js/sitio.js?v=c12ac48dc8" defer></script>
-<script src="/assets/js/checkout.js?v=f968b4c7ab" defer></script>
+<script src="/assets/js/catalogo.js?v=0003087f08"></script>
+<script src="/assets/js/sitio.js?v=49fd97c4f4" defer></script>
+<script src="/assets/js/checkout.js?v=30101e4c07" defer></script>
 </body>
 </html>

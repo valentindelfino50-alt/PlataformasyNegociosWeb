@@ -793,3 +793,26 @@
 footer.site .brandmark img{height:44px;}
 .hero-badge img{width:124px;height:auto;}
 @media (max-width:760px){.brandmark img{height:40px;}}
+
+/* ===== Confirmación de compra y WhatsApp ===== */
+.btn-wa{display:inline-flex;align-items:center;justify-content:center;gap:8px;}
+.btn-wa svg{width:20px;height:20px;flex:0 0 20px;}
+.pdp-buy .btn-wa{margin-top:10px;}
+.wa-cta{max-width:640px;margin:0 auto 22px;background:#E8F8EE;border:1.5px solid #1FA855;border-radius:20px;padding:22px;text-align:center;}
+.wa-cta h2{font-size:19px;margin:0 0 6px;color:#14532d;}
+.wa-cta p{margin:0 0 14px;color:#2f5d3f;font-size:14.5px;}
+.wa-cta .btn{font-size:16px;padding-block:15px;}
+.pedido-ok .co-next{margin-bottom:22px;}
+.pedido-ok .co-next .btn{margin-top:12px;}
+pre.bank{white-space:pre-wrap;word-break:break-word;font:600 15px/1.6 var(--font-body,inherit);background:var(--pink-tint,#FFE3EF);border-radius:14px;padding:14px 16px;margin:10px 0 0;}
+.pedido-ok .co-actions-row{margin-top:22px;display:flex;gap:12px;flex-wrap:wrap;justify-content:center;}
+@media (prefers-color-scheme: dark){
+  .wa-cta{background:#12301f;border-color:#1FA855;}
+  .wa-cta h2{color:#c9f2d8;}
+  .wa-cta p{color:#a8d9bb;}
+}
+.pedido-ok .co-summary{order:0;position:static;width:100%;}
+.pedido-ok{gap:0;}
+.pedido-ok .success-box{padding-bottom:6px;}
+.pedido-ok .co-next{margin-bottom:22px;}
+body:has(.pedido-ok:not([hidden])) .wa-float{display:none;}

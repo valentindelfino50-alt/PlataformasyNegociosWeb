@@ -20,7 +20,7 @@
       return { id: p.id, nombre: p.nombre, talle: i.size, cantidad: i.qty, precio: p.precio, imagen: p.imagen || '', color: p.color || '' };
     });
   }
-  function lineText(it) { return it.cantidad + ' x ' + it.nombre + ' (talle ' + it.talle + ') - ' + FF.money(it.precio * it.cantidad); }
+  function lineText(it) { return it.cantidad + ' × ' + it.nombre + ' — talle ' + it.talle + ' — ' + FF.money(it.precio * it.cantidad); }
   function itemRow(it) {
     var row = el('div', 'co-item');
     var thumb = el('div', 'co-thumb');
@@ -44,11 +44,21 @@
     for (var i = 0; i < 4; i++) { r += chars.charAt(Math.floor(Math.random() * chars.length)); }
     return 'FF-' + ymd + '-' + r;
   }
+  /* Mensaje que llega escrito al chat de WhatsApp del comercio. */
   function orderMessage(o) {
-    var L = ['Hola ' + (CONF.nombre || '') + '! Hice el pedido ' + o.numero + ':', ''];
+    var cierre = {
+      transferencia: CONF.datosTransferencia ? 'Voy a transferir y te mando el comprobante por acá. ¡Gracias! 😊' : '¿Me pasan los datos para transferir? ¡Gracias! 😊',
+      mercadopago: '¿Me pasan el link de Mercado Pago para pagar? ¡Gracias! 😊',
+      tarjeta: '¿Me pasan el link para pagar con tarjeta? ¡Gracias! 😊',
+      efectivo: 'Pago en efectivo cuando lo retire. ¡Gracias! 😊'
+    }[o.pago] || '¿Coordinamos el pago? ¡Gracias! 😊';
+    var L = ['¡Hola ' + (CONF.nombre || 'Funny Foot') + '! 👋 Quiero confirmar mi pedido *' + o.numero + '* de la web:', '', '🛍️ *Mi pedido*'];
     o.items.forEach(function (it) { L.push('• ' + lineText(it)); });
-    L.push('', 'Total: ' + FF.money(o.total) + ' (' + payName(o.pago) + ')',
-      o.entrega === 'retiro' ? 'Retiro en el local' : 'Envío a: ' + o.direccion, 'Nombre: ' + o.nombre);
+    L.push('', '💰 *Total: ' + FF.money(o.total) + '* (' + payName(o.pago) + ')',
+      o.entrega === 'retiro' ? '🏬 Lo retiro en el local' : '📦 Envío a: ' + o.direccion,
+      '👤 A nombre de: ' + o.nombre);
+    if (o.telefono) L.push('📞 Mi teléfono: ' + o.telefono);
+    L.push('', cierre);
     return L.join('\n');
   }
 
@@ -129,21 +139,9 @@
     form.addEventListener('input', function (e) { if (e.target.name) setErr(e.target.name, ''); });
 
     /* ---- envío del pedido ---- */
-    var alertBox = $('coAlert');
-    function showAlert(o, msg) {
-      alertBox.textContent = '';
-      alertBox.appendChild(el('p', null, msg));
-      var wa = el('a', 'btn btn-wa btn-block', 'Enviar mi pedido por WhatsApp');
-      wa.href = FF.waLink(orderMessage(o)); wa.target = '_blank'; wa.rel = 'noopener';
-      alertBox.appendChild(wa);
-      alertBox.hidden = false;
-      alertBox.scrollIntoView({ block: 'center' });
-    }
-
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       if (busy) return;
-      alertBox.hidden = true;
       var cartNow = FF.cart();
       if (!cartNow.length) { $('coEmpty').hidden = false; $('coGrid').hidden = true; return; }
       var errs = validate();
@@ -170,38 +168,63 @@
 
       busy = true;
       var btn = $('coSubmit'); btn.disabled = true; btn.textContent = 'Enviando pedido…';
+      var body = new URLSearchParams(new FormData(form)).toString();
       var send;
-      if (FF.preview) {
-        send = Promise.resolve();   /* en la vista previa de Claude no hay dónde enviar el formulario */
-      } else {
-        var ctl = (typeof AbortController !== 'undefined') ? new AbortController() : null;
-        var timer = setTimeout(function () { if (ctl) ctl.abort(); }, 20000);
-        send = fetch(FF.pageUrl(''), {
-          method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: new URLSearchParams(new FormData(form)).toString(), signal: ctl ? ctl.signal : undefined
-        }).then(function (res) { clearTimeout(timer); if (!res.ok) throw new Error('HTTP ' + res.status); });
-      }
-      send.then(function () {
+      if (FF.preview) send = Promise.resolve();   /* en la vista previa de Claude no hay dónde enviar el formulario */
+      else send = postOrder(body).catch(function () { return new Promise(function (r) { setTimeout(r, 600); }).then(function () { return postOrder(body); }); });
+      /* El cliente siempre llega a la confirmación: si el registro automático falló, el pedido viaja por WhatsApp. */
+      function finish(sent) {
+        order.sent = sent;
+        if (!sent) order.body = body;
         try { localStorage.setItem(LAST_KEY, JSON.stringify(order)); } catch (err) {}
         FF.clearCart();
         window.location.href = FF.pageUrl('pedido-recibido/');
-      }).catch(function () {
-        busy = false; btn.disabled = false; btn.textContent = 'Confirmar pedido';
-        showAlert(order, 'No pudimos registrar tu pedido. Revisá tu conexión y probá de nuevo, o enviá el pedido por WhatsApp y lo cargamos nosotros.');
+      }
+      send.then(function () { finish(true); }, function (err) {
+        try { console.warn('[Funny Foot] No se pudo registrar el pedido en Netlify Forms:', err && err.message); } catch (e2) {}
+        finish(false);
       });
     });
   }
 
+  /* envía el pedido a Netlify Forms (formulario "pedido") */
+  function postOrder(body) {
+    var ctl = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+    var timer = setTimeout(function () { if (ctl) ctl.abort(); }, 10000);
+    return fetch(FF.pageUrl(''), {
+      method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: body, signal: ctl ? ctl.signal : undefined
+    }).then(function (res) { clearTimeout(timer); if (!res.ok) throw new Error('HTTP ' + res.status); },
+      function (err) { clearTimeout(timer); throw err; });
+  }
+
   /* ======================= PEDIDO RECIBIDO ======================= */
+  function copyText(text, btn) {
+    function ok() { var t = btn.textContent; btn.textContent = '¡Copiado!'; setTimeout(function () { btn.textContent = t; }, 1800); }
+    if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(text).then(ok, function () {}); return; }
+    var ta = document.createElement('textarea'); ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.appendChild(ta);
+    ta.select(); try { document.execCommand('copy'); ok(); } catch (e) {} document.body.removeChild(ta);
+  }
+
   function initRecibido() {
     var o = null;
     try { o = JSON.parse(localStorage.getItem(LAST_KEY) || 'null'); } catch (e) { o = null; }
     if (!o || !o.numero || !Array.isArray(o.items)) { $('oVacio').hidden = false; return; }
     $('pedidoOk').hidden = false;
     $('oNumero').textContent = o.numero;
-    $('oAviso').textContent = o.preview
-      ? 'Vista previa: este pedido de prueba no se envió a nadie.'
-      : 'Enviamos tu pedido al comercio. Te contactamos por WhatsApp o email para confirmar disponibilidad y el total final.';
+    function aviso() {
+      $('oAviso').textContent = o.preview ? 'Vista previa: este pedido de prueba no se envió a nadie.'
+        : (o.sent ? 'Ya registramos tu pedido. Para confirmarlo más rápido, mandanos el mensaje por WhatsApp: ya está escrito.'
+          : 'Tu pedido está listo. Para confirmarlo, enviánoslo por WhatsApp con el botón verde: el mensaje ya está escrito.');
+    }
+    aviso();
+    /* si el registro automático había fallado, se reintenta en segundo plano sin molestar al cliente */
+    if (!o.sent && !o.preview && o.body) {
+      postOrder(o.body).then(function () {
+        o.sent = true; delete o.body;
+        try { localStorage.setItem(LAST_KEY, JSON.stringify(o)); } catch (e) {}
+        aviso();
+      }, function () {});
+    }
     var box = $('oItems'); box.textContent = '';
     o.items.forEach(function (it) { box.appendChild(itemRow(it)); });
     $('oSubtotal').textContent = FF.money(o.subtotal);
@@ -211,21 +234,42 @@
     $('oTotal').textContent = FF.money(o.total);
     $('oEntrega').textContent = o.entrega === 'retiro' ? 'Retirás en: ' + (CONF.direccion || 'nuestro local') + '. ' + (CONF.horarios || '') : 'Enviamos a: ' + o.direccion;
 
+    var datos = (CONF.datosTransferencia || '').trim();
     var pago = $('oPago'); pago.textContent = '';
-    var h = el('h2', null, 'Cómo seguimos: ' + payName(o.pago)); pago.appendChild(h);
-    var msg = {
-      transferencia: 'Transferí ' + FF.money(o.total) + ' y enviános el comprobante por WhatsApp indicando tu número de pedido.',
-      mercadopago: 'Te enviamos el link de Mercado Pago por WhatsApp o email para que pagues ' + FF.money(o.total) + '.',
-      tarjeta: 'Te contactamos para coordinar el pago con tarjeta mediante un link seguro.',
-      efectivo: 'Pagás ' + FF.money(o.total) + ' en efectivo en el local, cuando retirás tu pedido.',
-      a_coordinar: 'Te contactamos para acordar el pago.'
-    }[o.pago] || 'Te contactamos para acordar el pago.';
-    pago.appendChild(el('p', null, msg));
+    var waTxt = 'Tocá el botón y se abre el chat con tu pedido ya escrito. Solo tenés que enviarlo.';
     if (o.pago === 'transferencia') {
-      if (CONF.datosTransferencia) { pago.appendChild(el('pre', 'bank', CONF.datosTransferencia)); }
-      else { pago.appendChild(el('p', 'note-small', 'Te enviamos los datos bancarios por WhatsApp o email.')); }
+      pago.appendChild(el('h2', null, 'Datos para transferir'));
+      if (datos) {
+        pago.appendChild(el('p', null, 'Transferí ' + FF.money(o.total) + ' e indicá el pedido ' + o.numero + ' como referencia.'));
+        pago.appendChild(el('pre', 'bank', datos));
+        var cp = el('button', 'btn btn-outline btn-sm', 'Copiar datos'); cp.type = 'button';
+        cp.addEventListener('click', function () { copyText(datos, cp); });
+        pago.appendChild(cp);
+        pago.appendChild(el('p', 'note-small', 'Después enviános el comprobante por WhatsApp para dejar el pedido confirmado.'));
+        waTxt = 'Cuando hagas la transferencia, mandanos el comprobante por este chat. Tu pedido ya queda escrito.';
+      } else {
+        pago.appendChild(el('p', null, 'Te pasamos los datos bancarios por WhatsApp apenas nos escribas.'));
+        waTxt = 'Tocá el botón y escribinos: te pasamos los datos para transferir ' + FF.money(o.total) + '.';
+      }
+    } else {
+      pago.appendChild(el('h2', null, 'Cómo seguimos: ' + payName(o.pago)));
+      pago.appendChild(el('p', null, {
+        mercadopago: 'Te enviamos el link de Mercado Pago por WhatsApp para que pagues ' + FF.money(o.total) + '.',
+        tarjeta: 'Te enviamos por WhatsApp un link seguro para pagar con tarjeta.',
+        efectivo: 'Pagás ' + FF.money(o.total) + ' en efectivo en el local, cuando retirás tu pedido.'
+      }[o.pago] || 'Te contactamos para acordar el pago.'));
     }
-    $('oWa').href = FF.waLink(orderMessage(o));
+    $('oWaTexto').textContent = waTxt;
+    var wa = $('oWa'); wa.href = FF.waLink(orderMessage(o));
+    wa.addEventListener('click', function () { if (!o.preview) { FF.track('whatsapp_pedido', { value: o.total, currency: 'ARS' }); FF.convert((FF.cfg || {}).ADS_LABEL_WHATSAPP); } });
+
+    /* copia del resumen al correo del propio cliente (se abre su app de correo) */
+    if (o.email) {
+      var plain = orderMessage(o).replace(/\*/g, '') + (o.pago === 'transferencia' && datos ? '\n\nDatos para transferir:\n' + datos : '');
+      var mail = $('oMail');
+      mail.href = 'mailto:' + encodeURIComponent(o.email) + '?subject=' + encodeURIComponent('Mi pedido ' + o.numero + ' en ' + (CONF.nombre || 'Funny Foot')) + '&body=' + encodeURIComponent(plain);
+      mail.hidden = false;
+    }
 
     var key = 'ff_compra_' + o.numero, already = false;
     try { already = sessionStorage.getItem(key) === '1'; sessionStorage.setItem(key, '1'); } catch (e) {}

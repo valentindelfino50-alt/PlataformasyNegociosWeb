@@ -107,8 +107,11 @@ Google Ads exige datos del negocio reales y verificables. Hoy el sitio tiene los
 
 1. **Carrito:** el cliente elige talle y agrega. Se limita a 10 unidades por modelo y talle. Los productos agotados u ocultos no se pueden comprar.
 2. **Finalizar compra:** datos de contacto, envío a domicilio o retiro en el local, medio de pago y aceptación de términos. Muestra el total con envío y descuento, y valida cada campo.
-3. **Pedido:** se envía a Netlify Forms con un número (`FF-AAMMDD-XXXX`), los productos, los totales y los datos del cliente. Si el envío falla, el cliente ve un aviso y puede mandar el pedido por WhatsApp; el reintento conserva el mismo número.
-4. **Confirmación:** el cliente ve su número de pedido, el resumen y las instrucciones según el medio de pago (por ejemplo los datos para transferir). Tiene un botón para confirmar por WhatsApp con el número ya escrito.
+3. **Pedido:** se envía a Netlify Forms con un número (`FF-AAMMDD-XXXX`), los productos, los totales y los datos del cliente. Si ese registro automático falla, el cliente **no ve ningún error**: pasa igual a la confirmación, donde el botón de WhatsApp le manda el pedido completo, y el sitio reintenta el registro solo.
+4. **Confirmación:** el cliente ve su número de pedido, un botón verde **Enviar mi pedido por WhatsApp** (abre el chat del número del negocio con el mensaje ya escrito: modelos, talles, total, entrega y nombre), los datos para transferir con botón *Copiar datos* (se cargan en el panel: Envíos y pagos → Datos para transferir) y el resumen. También puede guardarse el resumen en su email con un toque.
+5. **Ficha de producto:** el botón **Comprar por WhatsApp** abre el chat con el modelo, el talle elegido y el precio escritos.
+
+> El sitio no manda emails automáticos al comprador (Netlify Forms solo avisa al comercio). Hacerlo requiere un servicio de email con clave propia (Resend, Brevo, etc.) y una función en Netlify.
 
 ### Lo que esta compra NO hace
 - **No cobra en línea.** No hay pasarela de pago (Mercado Pago, tarjeta). El comercio contacta al cliente, confirma disponibilidad y acuerda el pago. Cobrar con tarjeta dentro del sitio requiere una cuenta de Mercado Pago y una función en Netlify con las credenciales: se puede agregar después.

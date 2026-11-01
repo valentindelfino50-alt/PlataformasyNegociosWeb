@@ -84,12 +84,20 @@
   function orderLines() {
     return CART.map(function (i) {
       var p = byId(i.id);
-      return i.qty + ' x ' + p.nombre + ' (talle ' + i.size + ') - ' + money(p.precio * i.qty);
+      return i.qty + ' × ' + p.nombre + ' — talle ' + i.size + ' — ' + money(p.precio * i.qty);
     });
   }
+  function greet() { return '¡Hola ' + (CONF.nombre || 'Funny Foot') + '! 👋'; }
+  /* Mensaje del carrito ("Prefiero pedir por WhatsApp"): llega al chat ya escrito y listo para enviar. */
   function quickOrderText() {
-    return ['Hola ' + (CONF.nombre || '') + '! Quiero hacer este pedido:', ''].concat(orderLines().map(function (l) { return '• ' + l; }),
-      ['', 'Total de productos: ' + money(subtotal()), '', 'Mi nombre:', 'Entrega (envío a domicilio o retiro en el local):']).join('\n');
+    return [greet() + ' Quiero comprar:', ''].concat(orderLines().map(function (l) { return '• ' + l; }),
+      ['', '💰 Total de los productos: ' + money(subtotal()),
+        '', '¿Me confirman si está disponible y cómo coordinamos el pago y la entrega (envío o retiro en el local)? ¡Gracias! 😊']).join('\n');
+  }
+  /* Mensaje de un solo producto, desde la ficha. */
+  function productText(p, size) {
+    return [greet() + ' Quiero comprar:', '', '• ' + p.nombre + (size ? ' — talle ' + size : ''), '💰 ' + money(p.precio),
+      '', '¿Lo tienen disponible? ¿Cómo coordinamos el pago y la entrega? ¡Gracias! 😊'].join('\n');
   }
 
   var toastTimer;
@@ -210,6 +218,19 @@
     if (!sel || !sel.value) { if (sel) { sel.style.borderColor = 'var(--pink)'; sel.focus(); } toast('Elegí un talle primero'); return; }
     sel.style.borderColor = '';
     addToCart(id, sel.value);
+  });
+
+  /* "Comprar por WhatsApp" de la ficha: arma el mensaje con el modelo, el talle elegido y el precio */
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest ? e.target.closest('[data-wa-product]') : null;
+    if (!a) return;
+    var id = parseInt(a.getAttribute('data-wa-product'), 10), p = byId(id);
+    if (!p) return;
+    var sel = $('size-' + id);
+    if (sel && !sel.value) { e.preventDefault(); sel.style.borderColor = 'var(--pink)'; sel.focus(); toast('Elegí un talle primero'); return; }
+    a.href = waLink(productText(p, sel ? sel.value : ''));
+    track('whatsapp_producto', { value: p.precio, currency: 'ARS', item_id: String(p.id) });
+    convert(CFG.ADS_LABEL_WHATSAPP);
   });
 
   /* fotos de la ficha de producto */

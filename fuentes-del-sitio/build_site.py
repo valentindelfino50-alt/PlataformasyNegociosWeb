@@ -721,7 +721,8 @@ def pg_product(p):
         <label for="size-%(id)d">Talle</label>
         <select class="size-select" id="size-%(id)d"><option value="">Elegí un talle</option>%(sizes)s</select>
         <button type="button" class="btn btn-pink btn-block" data-add="%(id)d">Agregar al carrito</button>
-      </div>''' % dict(id=p['id'], sizes=sizes)
+        <a class="btn btn-wa btn-block" data-wa-product="%(id)d" href="%(wa)s" target="_blank" rel="noopener">%(iwa)s Comprar por WhatsApp</a>
+      </div>''' % dict(id=p['id'], sizes=sizes, wa=wa_link(), iwa=ICON_WA)
     facts = []
     if p['colorNombre']:
         facts.append('<li><b>Color</b><span>%s</span></li>' % esc(p['colorNombre']))
@@ -1001,7 +1002,6 @@ def pg_checkout():
         <div class="field"><label for="fNotas">Notas para el pedido (opcional)</label><textarea id="fNotas" name="notas" rows="3" maxlength="500" placeholder="Horarios de entrega, referencias, consultas…"></textarea></div>
         <label class="consent"><input type="checkbox" name="acepta" id="fAcepta" value="si" required> <span>Acepto los <a href="/privacidad-y-terminos/" class="u" target="_blank" rel="noopener">términos y la política de privacidad</a>.</span></label>
         <p class="err" data-err="acepta" hidden></p>
-        <div class="co-alert" id="coAlert" role="alert" hidden></div>
         <button type="submit" class="btn btn-pink btn-block" id="coSubmit">Confirmar pedido</button>
       </fieldset>
     </form>
@@ -1028,13 +1028,19 @@ def pg_recibido():
   <div class="pedido-ok" id="pedidoOk" hidden>
     <div class="success-box">
       <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M8 12.5l2.6 2.6L16 9.6"/></svg>
-      <h2 style="font-size:24px;">¡Recibimos tu pedido!</h2>
-      <p>Guardá tu número de pedido:</p>
+      <h2 style="font-size:24px;">¡Gracias por tu compra!</h2>
+      <p>Tu número de pedido es:</p>
       <div class="order-num" id="oNumero"></div>
       <p id="oAviso"></p>
     </div>
+    <div class="wa-cta" id="oWaBox">
+      <h2>Último paso: confirmá por WhatsApp</h2>
+      <p id="oWaTexto">Tocá el botón y se abre el chat con tu pedido ya escrito. Solo tenés que enviarlo.</p>
+      <a class="btn btn-wa btn-block" id="oWa" href="%(wa)s" target="_blank" rel="noopener">%(iwa)s Enviar mi pedido por WhatsApp</a>
+    </div>
+    <div class="co-next" id="oPago"></div>
     <div class="co-summary" style="max-width:640px;margin:0 auto;">
-      <h2>Detalle</h2>
+      <h2>Detalle de tu pedido</h2>
       <div id="oItems"></div>
       <div class="co-line"><span>Subtotal</span><span id="oSubtotal"></span></div>
       <div class="co-line" id="oDescRow" hidden><span>Descuento</span><span id="oDesc"></span></div>
@@ -1042,9 +1048,8 @@ def pg_recibido():
       <div class="co-line total"><span>Total a pagar</span><span id="oTotal"></span></div>
       <p class="note-small" id="oEntrega"></p>
     </div>
-    <div class="co-next" id="oPago"></div>
     <div class="co-actions-row">
-      <a class="btn btn-wa" id="oWa" href="%(wa)s" target="_blank" rel="noopener">Confirmar por WhatsApp</a>
+      <a class="btn btn-outline" id="oMail" href="#" hidden>Guardar el resumen en mi email</a>
       <a class="btn btn-outline" href="/productos/">Seguir comprando</a>
     </div>
   </div>
@@ -1053,7 +1058,7 @@ def pg_recibido():
     <p>Si acabás de hacer un pedido y ves este mensaje, escribinos por WhatsApp con tu nombre y te ayudamos.</p>
     <a class="btn btn-pink" href="/productos/">Ver catálogo</a>
   </div>
-</section>''' % dict(ph=pagehead('Pedido recibido', ''), wa=wa_link())
+</section>''' % dict(ph=pagehead('Pedido recibido', ''), wa=wa_link(), iwa=ICON_WA)
     return page('/pedido-recibido/', 'Pedido recibido | %s' % NAME, 'Recibimos tu pedido.', '', body, robots='noindex,follow',
                 with_feedback=False, extra_js='<script src="/assets/js/checkout.js" defer></script>\n')
 
