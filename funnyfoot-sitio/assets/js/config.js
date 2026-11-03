@@ -14,7 +14,7 @@
 */
 window.FUNNYFOOT = {
   GA4_ID: "",
-  ADS_ID: "",
+  ADS_ID: "AW-18530893017",
   ADS_LABEL_COMPRA: "",
   ADS_LABEL_LEAD: "",
   ADS_LABEL_WHATSAPP: ""
