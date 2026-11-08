@@ -161,6 +161,23 @@ def local_business_ld():
     return ld
 
 
+def google_tag_html():
+    """Etiqueta de Google (Analytics / Ads) escrita en el HTML, con los IDs de assets/js/config.js."""
+    try:
+        cfg = open(os.path.join(SITE, 'assets', 'js', 'config.js'), encoding='utf-8').read()
+    except OSError:
+        return ''
+    ids = []
+    for key in ('GA4_ID', 'ADS_ID'):
+        m = re.search(key + r':\s*"([A-Za-z0-9-]+)"', cfg)
+        if m:
+            ids.append(m.group(1))
+    if not ids:
+        return ''
+    return ('<script async src="https://www.googletagmanager.com/gtag/js?id=%s"></script>\n<script>\n  %s\n</script>\n'
+            % (ids[0], '\n  '.join("gtag('config', '%s');" % i for i in ids)))
+
+
 def head(title, desc, path, robots='index,follow,max-image-preview:large', ld=None, og_image=None):
     url = abs_url(path)
     ld_html = ''.join('<script type="application/ld+json">%s</script>\n' % json.dumps(x, ensure_ascii=False) for x in (ld or []))
@@ -174,7 +191,7 @@ def head(title, desc, path, robots='index,follow,max-image-preview:large', ld=No
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
 </script>
-<meta charset="utf-8">
+%(gtag)s<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>%(title)s</title>
 <meta name="description" content="%(desc)s">
@@ -201,7 +218,7 @@ def head(title, desc, path, robots='index,follow,max-image-preview:large', ld=No
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/css/estilos.css">
 %(ld)s</head>
-''' % dict(title=esc(title), desc=esc(desc), robots=robots, url=url, site=esc(NAME), img=esc(og_image), logo=esc(abs_url('/logo.png')), ld=ld_html)
+''' % dict(title=esc(title), desc=esc(desc), robots=robots, url=url, site=esc(NAME), img=esc(og_image), logo=esc(abs_url('/logo.png')), gtag=google_tag_html(), ld=ld_html)
 
 
 def announce():

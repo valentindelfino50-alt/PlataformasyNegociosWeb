@@ -13,7 +13,7 @@
   el panel de administración (/admin/), no acá.
 */
 window.FUNNYFOOT = {
-  GA4_ID: "",
+  GA4_ID: "G-4NXC6XCLCW",
   ADS_ID: "AW-18530893017",
   ADS_LABEL_COMPRA: "14z6CKye_LAdENn5m4RF",
   ADS_LABEL_LEAD: "",

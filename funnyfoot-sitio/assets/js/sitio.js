@@ -27,6 +27,7 @@
   function loadGoogleTag() {
     var ids = [CFG.GA4_ID, CFG.ADS_ID].filter(Boolean);
     if (!ids.length) return;
+    if (window.gtag) return;   /* la etiqueta ya viene escrita en el HTML de cada página */
     window.dataLayer = window.dataLayer || [];
     window.gtag = function () { window.dataLayer.push(arguments); };
     var s = document.createElement('script');
