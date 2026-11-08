@@ -168,13 +168,12 @@ def head(title, desc, path, robots='index,follow,max-image-preview:large', ld=No
     return '''<!doctype html>
 <html lang="es-AR">
 <head>
-<!-- Google Tag Manager -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-KT3GNBMT');</script>
-<!-- End Google Tag Manager -->
+<script async src="https://www.googletagmanager.com/gtm.js?id=GTM-KT3GNBMT"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+</script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>%(title)s</title>
@@ -226,9 +225,6 @@ def header(active):
     def links():
         return ''.join('<a href="%s"%s>%s</a>' % (u, act if k == active else '', t) for k, u, t in items)
     return '''<body>
-<!-- Google Tag Manager (noscript) -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KT3GNBMT" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-<!-- End Google Tag Manager (noscript) -->
 <a class="skip" href="#contenido">Saltar al contenido</a>
 %(ann)s
 <header class="site">
@@ -915,7 +911,7 @@ def policies():
 <h2>Cómo se procesan</h2>
 <p>Los formularios y pedidos del sitio se reciben a través de Netlify, el servicio donde está alojado. Las conversaciones por WhatsApp se procesan en esa aplicación, con sus propias condiciones. El sitio carga tipografías desde Google Fonts.</p>
 <h2>Cookies y medición</h2>
-<p>El carrito se guarda en tu propio navegador (almacenamiento local) para que no pierdas tu selección. Además, este sitio puede utilizar etiquetas de Google (Google Analytics, Google Ads y Google Tag Manager) para medir las visitas y evaluar el resultado de nuestros anuncios. Esas etiquetas usan cookies e identificadores para recopilar datos de navegación de forma anónima o seudonimizada. Podés administrar los anuncios que ves desde la configuración de anuncios de tu cuenta de Google, o desactivar las cookies desde tu navegador.</p>
+<p>El carrito se guarda en tu propio navegador (almacenamiento local) para que no pierdas tu selección. Además, este sitio puede utilizar etiquetas de Google (Google Analytics y Google Ads) para medir las visitas y evaluar el resultado de nuestros anuncios. Esas etiquetas usan cookies e identificadores para recopilar datos de navegación de forma anónima o seudonimizada. Podés administrar los anuncios que ves desde la configuración de anuncios de tu cuenta de Google, o desactivar las cookies desde tu navegador.</p>
 <h2>Tus derechos</h2>
 <p>Podés pedirnos acceso, rectificación o eliminación de tus datos escribiéndonos por los medios de contacto indicados arriba. La Agencia de Acceso a la Información Pública, en su carácter de Órgano de Control de la Ley N° 25.326, tiene la atribución de atender las denuncias y reclamos que interpongan quienes resulten afectados en sus derechos por incumplimiento de las normas vigentes en materia de protección de datos personales.</p>
 <h2>Condiciones de uso</h2>
