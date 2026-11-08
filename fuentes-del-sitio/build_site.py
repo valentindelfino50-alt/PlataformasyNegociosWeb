@@ -168,12 +168,13 @@ def head(title, desc, path, robots='index,follow,max-image-preview:large', ld=No
     return '''<!doctype html>
 <html lang="es-AR">
 <head>
-<script async src="https://www.googletagmanager.com/gtm.js?id=GTM-KT3GNBMT"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-</script>
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-KT3GNBMT');</script>
+<!-- End Google Tag Manager -->
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>%(title)s</title>
@@ -225,6 +226,9 @@ def header(active):
     def links():
         return ''.join('<a href="%s"%s>%s</a>' % (u, act if k == active else '', t) for k, u, t in items)
     return '''<body>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KT3GNBMT" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
 <a class="skip" href="#contenido">Saltar al contenido</a>
 %(ann)s
 <header class="site">
